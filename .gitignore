@@ -19,6 +19,15 @@ src/server/.DS_Store
 
 # Generated files
 .idea/**/contentModel.xml
+.cache/
+coverage/
+dist/*
+!dist/index.html
+node_modules/
+*.log
+
+# VS Stuff
+.vscode
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
