@@ -12,8 +12,8 @@ Empty Project.
 # Usage <a name="3"/>
 
 # Authors
-- **Lorenzo Gianassi**
-- **Francesco Gigli**
+- [**Lorenzo Gianassi**](https://github.com/LorenzoGianassi)
+- [**Francesco Gigli**](https://github.com/FrancescoGigli)
 # Acknowledgments
 Computer Graphics and 3D Project © Course held by Professor [Stefano Berretti](https://www.unifi.it/p-doc2-2019-0-A-2b333d293228-1.html) - Computer Engineering Master Degree @[University of Florence](https://www.unifi.it/changelang-eng.html)
 
