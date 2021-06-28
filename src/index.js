@@ -1,27 +1,35 @@
-//import "./styles.scss"
-
-import * as THREE from 'THREE';
-
-var GLTFLoader = require("THREE/examples/jsm/loaders/GLTFLoader.js");
-
+import * as THREE from 'three';
+import {
+    AmbientLight,
+    AxesHelper,
+    LinearFilter, Material,
+    Mesh,
+    MeshBasicMaterial,
+    PerspectiveCamera,
+    PointLight,
+    RGBFormat,
+    Scene,
+    SphereBufferGeometry,
+    Vector2,
+    WebGLRenderer,
+    WebGLRenderTarget
+} from "three";
+import {GLTFLoader} from 'THREE/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from "THREE/examples/jsm/controls/OrbitControls";
-var EffectComposer = require("THREE/examples/jsm/postprocessing/EffectComposer");
-
+import {EffectComposer} from "THREE/examples/jsm/postprocessing/EffectComposer";
 import {RenderPass} from "THREE/examples/jsm/postprocessing/RenderPass";
 import {ShaderPass} from "THREE/examples/jsm/postprocessing/ShaderPass";
-import vertexShader from "./VertexShader.glsl"
-
-var scatteringFragmentShader = require("./ScatteringFragmentShader.glsl");
-
-var blendingFragmentShader = require("./BlendingFragmentShader.glsl");
-
+import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
+import passThroughVertexShader from "./PassThroughVertexShader.glsl"
+import blendingFragmentShader from "./BlendingFragmentShader.glsl"
+import passThroughFragmentShader from "./PassThroughFragmentShader.glsl"
 
 
 
 const occlusionShader = {
     uniforms: {
-        smpDiffuse: {value: null},
-        lightPosition: {value: new THREE.Vector2(0.5, 0.5)},
+        tDiffuse: {value: null},
+        lightPosition: {value: new Vector2(0.5, 0.5)},
         exposure: {value: 0.05},
         decay: {value: 0.99},
         density: {value: 0.8},
@@ -29,22 +37,36 @@ const occlusionShader = {
         samples: {value: 200}
     },
 
-    vertexShader: vertexShader,
+    vertexShader: passThroughVertexShader,
     fragmentShader: scatteringFragmentShader
 }
 
 const blendingShader = {
     uniforms: {
-        smpDiffuse: {value: null},
-        smpOcclusion: {value: null}
+        tDiffuse: {value: null},
+        tOcclusion: {value: null}
     },
 
-    vertexShader: vertexShader,
+    vertexShader: passThroughVertexShader,
     fragmentShader: blendingFragmentShader
 }
 
+
+const passThroughShader = {
+    uniforms: {
+        tDiffuse: {value: null},
+        tOcclusion: {value: null}
+    },
+
+    vertexShader: passThroughVertexShader,
+    fragmentShader: passThroughFragmentShader
+}
+
+
+
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
+const LOADING_LAYER = 2;
 
 const axesHelper = new THREE.AxesHelper(10);
 
@@ -60,28 +82,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-var loader = new GLTFLoader.GLTFLoader();
-loader.load('scene.gltf', skull => {
-    skull.scene.traverse(o => {
-        if (o instanceof THREE.Mesh) {
-            let material = new THREE.MeshBasicMaterial({color: "#000000"});
-            let occlusionObject = new THREE.Mesh(o.geometry, material)
 
-            o.add(axesHelper);
-
-            occlusionObject.add(new THREE.AxesHelper(10));
-            occlusionObject.layers.set(OCCLUSION_LAYER)
-            o.parent?.add(occlusionObject)
-        }
-    })
-
-    scene.add(skull.scene);
-    skull.scene.position.z = 2;
-}, undefined, error => {
-    console.error(error);
-});
-
-
+var loader = new GLTFLoader();
 
 loader.load('scene.gltf', function (skull) {
     skull.scene.traverse(function (o) {
@@ -107,7 +109,7 @@ let ambientLight = new THREE.AmbientLight("#2c3e50");
 scene.add(ambientLight);
 
 //PointLight
-let pointLight = new THREE.PointLight("#ffffff");
+let pointLight = new THREE.PointLight("#000000");
 scene.add(pointLight);
 
 //SphereGeometry// forse sole
@@ -120,39 +122,44 @@ scene.add(lightSphere);
 camera.position.z = 6;
 controls.update();
 
-
-
-//EffectComposer
-function composeEffects() {
+function composeEffects(){
     const renderTargetParameters = {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBFormat,
+        minFilter: LinearFilter,
+        magFilter: LinearFilter,
+        format: RGBFormat,
         stencilBuffer: false
     };
-    let occlusionRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth / 2, window.innerHeight / 2, renderTargetParameters)
+	let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
-    //SceneComposer
-    let sceneComposer = new EffectComposer.EffectComposer(renderer);
-    sceneComposer.addPass(new RenderPass(scene, camera));
 
-    //OcclusionComposer
-    let occlusionComposer = new EffectComposer.EffectComposer(renderer, occlusionRenderTarget);
+        //OcclusionComposer
+    let occlusionComposer = new EffectComposer(renderer, target);
     occlusionComposer.addPass(new RenderPass(scene, camera));
 
+        //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
     occlusionComposer.addPass(scatteringPass);
+    
+    //SceneComposer
+    let sceneComposer = new EffectComposer(renderer);
+    sceneComposer.addPass(new RenderPass(scene, camera));
+
+
+    let dummyPass = new ShaderPass(passThroughShader);
+    occlusionComposer.addPass(dummyPass);
 
 
 
     //Blending Pass
     let blendingPass = new ShaderPass(blendingShader);
-    blendingPass.uniforms.smpOcclusion.value = occlusionRenderTarget.texture;
+    blendingPass.uniforms.tOcclusion.value = target.texture;
     blendingPass.renderToScreen = true;
     sceneComposer.addPass(blendingPass);
 
     return [occlusionComposer, sceneComposer]
 }
+
+
 
 function update() {}
 

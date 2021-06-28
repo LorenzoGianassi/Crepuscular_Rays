@@ -2,7 +2,7 @@
   "name": "crepuscolar-rays",
   "version": "1.0.0",
   "description": "",
-  "main": "bundle.js",
+  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,9 +17,10 @@
     "dat.gui": "^0.7.7",
     "jquery": "latest",
     "popper.js": "latest",
-    "three": "^0.118.3"
+    "three": "^0.125.0"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.32",
     "@types/dat.gui": "^0.7.5",
     "css-loader": "^3.6",
     "favicons-webpack-plugin": "^3.0.1",
