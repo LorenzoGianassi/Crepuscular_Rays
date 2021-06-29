@@ -23,7 +23,7 @@ import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import passThroughFragmentShader from "./PassThroughFragmentShader.glsl"
-
+import doggoFile from "../models/scene.gltf";
 
 
 const occlusionShader = {
@@ -77,20 +77,40 @@ let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 const renderer = new THREE.WebGLRenderer();
 let controls = new OrbitControls(camera, renderer.domElement);
 
+
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
 document.body.appendChild(renderer.domElement);
 
 
+const loaderLondonHall = new GLTFLoader();
 
+loaderLondonHall.load(doggoFile, function ( gltf ) {
+    let material = new MeshBasicMaterial({color: "#000000"});
+    let doggoGeometry = new THREE.PlaneGeometry(0.5, 0.5);
+    let occlusionObject = new Mesh(doggoGeometry, material)
+    scene.add(gltf.scene);
+
+    occlusionObject.add(new AxesHelper(10));
+    occlusionObject.layers.set(OCCLUSION_LAYER)
+    scene.add(gltf.scene);
+        gltf.scene.position.z = 2;
+}, function ( error ) {
+    console.error( error );
+} );
+
+/*
 var loader = new GLTFLoader();
 
-loader.load('scene.gltf', function (skull) {
+loader.load(doggoFile, function (skull) {
     skull.scene.traverse(function (o) {
         var _a;
         if (o instanceof THREE.Mesh) {
             var material = new THREE.MeshBasicMaterial({ color: "#000000" });
-            var occlusionObject = new THREE.Mesh(o.geometry, material);
+            var occlusionObject = new THREE.Mesh(o.geometry, o.material);
             o.add(axesHelper);
             occlusionObject.add(new THREE.AxesHelper(10));
             occlusionObject.layers.set(OCCLUSION_LAYER);
@@ -102,7 +122,7 @@ loader.load('scene.gltf', function (skull) {
 }, undefined, function (error) {
     console.error(error);
 });
-
+*/
 
 //AmbientLight
 let ambientLight = new THREE.AmbientLight("#2c3e50");
