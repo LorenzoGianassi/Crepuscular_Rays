@@ -19,6 +19,7 @@ import {OrbitControls} from "THREE/examples/jsm/controls/OrbitControls";
 import {EffectComposer} from "THREE/examples/jsm/postprocessing/EffectComposer";
 import {RenderPass} from "THREE/examples/jsm/postprocessing/RenderPass";
 import {ShaderPass} from "THREE/examples/jsm/postprocessing/ShaderPass";
+import {CopyShader} from "three/examples/jsm/shaders/CopyShader";
 import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
@@ -164,10 +165,8 @@ function composeEffects(){
     let sceneComposer = new EffectComposer(renderer);
     sceneComposer.addPass(new RenderPass(scene, camera));
 
-
-    let dummyPass = new ShaderPass(passThroughShader);
-    occlusionComposer.addPass(dummyPass);
-
+    let finalPass = new ShaderPass(CopyShader);
+    occlusionComposer.addPass(finalPass);
 
 
     //Blending Pass
@@ -187,6 +186,7 @@ let [occlusionComposer, sceneComposer] = composeEffects();
 
 function render() {
     camera.layers.set(OCCLUSION_LAYER);
+    renderer.setClearColor('#342f46')
     occlusionComposer.render();
 
     camera.layers.set(DEFAULT_LAYER);
