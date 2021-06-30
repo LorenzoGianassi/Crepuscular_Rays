@@ -17,13 +17,17 @@ const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
 const scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+//Camera
+const camera = new THREE.PerspectiveCamera(
+    75,                                   // Field of view
+    window.innerWidth / window.innerHeight, // Aspect ratio
+    0.1,                                  // Near clipping pane
+    1000                                  // Far clipping pane
+);
 
-const renderer = new THREE.WebGLRenderer();
-let controls = new OrbitControls(camera, renderer.domElement);
-
-
+//Renderer 
+var renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = "absolute";
@@ -31,11 +35,13 @@ renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 document.body.appendChild(renderer.domElement);
 
+//Control Camera
+const controls = new OrbitControls(camera, renderer.domElement);
 
+//Loader
 const loader = new GLTFLoader();
 
 function buildScene(){
-
     loader.load(testfile, function ( gltf ) {
         let material = new THREE.MeshBasicMaterial({color: "#000000"});
         let geometry = new THREE.PlaneGeometry(0.5, 0.5);
@@ -99,9 +105,8 @@ const blendingShader = {
 }
 
 
-
 // PostProcessing
-function composeEffects(){
+function composeEffects(renderer, scene, camera){
     const renderTargetParameters = {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -110,7 +115,7 @@ function composeEffects(){
     };
 
     // A preconfigured render target internally used by EffectComposer.
-	 let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
+	let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
     //OcclusionComposer
     let occlusionComposer = new EffectComposer(renderer,target); 
@@ -143,9 +148,9 @@ function composeEffects(){
 
 function update() {}
 
-let [occlusionComposer, sceneComposer] = composeEffects();
+let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera);
 
-function render() {
+function render(camera) {
     camera.layers.set(OCCLUSION_LAYER);
     renderer.setClearColor('#342f46')
 
@@ -159,12 +164,12 @@ function render() {
     sceneComposer.render();
 }
 
-function onFrame() {
-    requestAnimationFrame(onFrame);
+function onFrame(camera) {
+    requestAnimationFrame(() => onFrame(camera));
     controls.update();
     update();
-    render();
+    render(camera);
 }
 
-buildscene();
-onFrame();
+buildScene();
+onFrame(camera);
