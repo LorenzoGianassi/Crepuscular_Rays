@@ -9,7 +9,7 @@ import {CopyShader} from "three/examples/jsm/shaders/CopyShader";
 import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
-import doggoFile from "../models/scene.gltf";
+import testfile from "../models/scene.gltf";
 
 // Layers
 const DEFAULT_LAYER = 0;
@@ -34,38 +34,42 @@ document.body.appendChild(renderer.domElement);
 
 const loader = new GLTFLoader();
 
-loader.load(doggoFile, function ( gltf ) {
-    let material = new THREE.MeshBasicMaterial({color: "#000000"});
-    let geometry = new THREE.PlaneGeometry(0.5, 0.5);
-    let occlusionObject = new THREE.Mesh(geometry, material)
-    scene.add(gltf.scene);
+function buildScene(){
 
-    occlusionObject.add(new THREE.AxesHelper(10));
-    occlusionObject.layers.set(OCCLUSION_LAYER)
-    scene.add(gltf.scene);
-        gltf.scene.position.z = 2;
-}, function ( error ) {
-    console.error( error );
-} );
-
-
-//AmbientLight
-let ambientLight = new THREE.AmbientLight("#2c3e50");
-scene.add(ambientLight);
-
-//PointLight
-let pointLight = new THREE.PointLight("#000000");
-scene.add(pointLight);
-
-//SphereGeometry// forse sole
-let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
-let material = new THREE.MeshBasicMaterial({color: 0xffffff});
-let lightSphere = new THREE.Mesh(geometry, material);
-lightSphere.layers.set(OCCLUSION_LAYER)
-scene.add(lightSphere);
-
-camera.position.z = 6;
-controls.update();
+    loader.load(testfile, function ( gltf ) {
+        let material = new THREE.MeshBasicMaterial({color: "#000000"});
+        let geometry = new THREE.PlaneGeometry(0.5, 0.5);
+        let occlusionObject = new THREE.Mesh(geometry, material)
+        scene.add(gltf.scene);
+    
+        occlusionObject.add(new THREE.AxesHelper(10));
+        occlusionObject.layers.set(OCCLUSION_LAYER)
+        scene.add(gltf.scene);
+            gltf.scene.position.z = 2;
+    }, function ( error ) {
+        console.error( error );
+    } );
+    
+    
+    //AmbientLight
+    let ambientLight = new THREE.AmbientLight("#2c3e50");
+    scene.add(ambientLight);
+    
+    //PointLight
+    let pointLight = new THREE.PointLight("#000000");
+    scene.add(pointLight);
+    
+    //SphereGeometry
+    let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
+    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
+    let lightSphere = new THREE.Mesh(geometry, material);
+    lightSphere.layers.set(OCCLUSION_LAYER)
+    scene.add(lightSphere);
+    
+    camera.position.z = 6;
+    controls.update();
+    
+}
 
 
 // Shaders
@@ -104,18 +108,19 @@ function composeEffects(){
         format: THREE.RGBFormat,
         stencilBuffer: false
     };
-	let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
+    // A preconfigured render target internally used by EffectComposer.
+	 let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
     //OcclusionComposer
-    let occlusionComposer = new EffectComposer(renderer, target);
+    let occlusionComposer = new EffectComposer(renderer,target); 
     occlusionComposer.addPass(new RenderPass(scene, camera));
 
-     //Scattering
+    //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
     occlusionComposer.addPass(scatteringPass);
    
-    //  Copy Shader
+    // Copy Shader
     let finalPass = new ShaderPass(CopyShader);
     occlusionComposer.addPass(finalPass);
 
@@ -127,7 +132,8 @@ function composeEffects(){
     //Blending Pass
     let blendingPass = new ShaderPass(blendingShader);
     blendingPass.uniforms.tOcclusion.value = target.texture;
-    blendingPass.renderToScreen = true;
+    
+    blendingPass.renderToScreen = true; // Whether the final pass is rendered to the screen (default framebuffer) or not.
     sceneComposer.addPass(blendingPass);
 
     return [occlusionComposer, sceneComposer]
@@ -142,10 +148,14 @@ let [occlusionComposer, sceneComposer] = composeEffects();
 function render() {
     camera.layers.set(OCCLUSION_LAYER);
     renderer.setClearColor('#342f46')
+
+    // call the render method of the composer
     occlusionComposer.render();
 
     camera.layers.set(DEFAULT_LAYER);
     renderer.setClearColor("#030509");
+
+    // call the render method of the composer
     sceneComposer.render();
 }
 
@@ -156,4 +166,5 @@ function onFrame() {
     render();
 }
 
+buildscene();
 onFrame();
