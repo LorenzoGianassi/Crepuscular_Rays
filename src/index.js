@@ -16,6 +16,7 @@ const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
+const axesHelper = new THREE.AxesHelper(10);
 
 const scene = new THREE.Scene();
 
@@ -49,6 +50,8 @@ function buildScene(){
                 let material = new THREE.MeshBasicMaterial({color: "#000000"});
                 //let geometry = new THREE.BufferGeometry(0.5, 0.5);
                 let occlusionObject = new THREE.Mesh(obj.geometry, material)
+                obj.add(axesHelper);
+                occlusionObject.add(new THREE.AxesHelper(100));
                 occlusionObject.layers.set(OCCLUSION_LAYER)
                 if (obj.parent != null){
                     obj.parent.add(occlusionObject)
@@ -80,6 +83,7 @@ function buildScene(){
     let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
     let material = new THREE.MeshBasicMaterial({color: 0xffffff});
     let lightSphere = new THREE.Mesh(geometry, material);
+    lightSphere.add(new THREE.AxesHelper(100));
     lightSphere.layers.set(OCCLUSION_LAYER)
     scene.add(lightSphere);
     
