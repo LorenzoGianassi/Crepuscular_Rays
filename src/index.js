@@ -16,16 +16,15 @@ const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
-const axesHelper = new THREE.AxesHelper(10);
 
 const scene = new THREE.Scene();
 
 //Camera
 const camera = new THREE.PerspectiveCamera(
-    750,                                   // Field of view
+    5,                                   // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1,                                  // Near clipping pane
-    1000                                  // Far clipping pane
+    1000                             // Far clipping pane
 );
 
 //Renderer 
@@ -48,10 +47,8 @@ function buildScene(){
         gltf.scene.traverse( function (obj) {
             if(obj.isMesh){
                 let material = new THREE.MeshBasicMaterial({color: "#000000"});
-                //let geometry = new THREE.PlaneGeometry(0.5, 0.5);
+                //let geometry = new THREE.BufferGeometry(0.5, 0.5);
                 let occlusionObject = new THREE.Mesh(obj.geometry, material)
-                obj.add(axesHelper);
-                occlusionObject.add(new THREE.AxesHelper(100));
                 occlusionObject.layers.set(OCCLUSION_LAYER)
                 if (obj.parent != null){
                     obj.parent.add(occlusionObject)
@@ -62,8 +59,8 @@ function buildScene(){
 
         scene.add(gltf.scene);
             gltf.scene.position.x = 3;
-            gltf.scene.position.y = 3;
-            gltf.scene.position.z = 3;
+            gltf.scene.position.y = -0.5;
+            gltf.scene.position.z = 5;
             gltf.scene.visible = true;
             
     }, function ( error ) {
@@ -99,7 +96,7 @@ const occlusionShader = {
         exposure: {value: 0.05},
         decay: {value: 0.99},
         density: {value: 0.8},
-        weight: {value: 1.8},
+        weight: {value: 0.8},
         samples: {value: 100}
     },
 
@@ -165,6 +162,7 @@ let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera)
 
 function render(camera) {
     camera.layers.set(OCCLUSION_LAYER);
+    
 
     // call the render method of the composer
     occlusionComposer.render();
