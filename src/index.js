@@ -24,7 +24,7 @@ const camera = new THREE.PerspectiveCamera(
     5,                                   // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1,                                  // Near clipping pane
-    1000                             // Far clipping pane
+    1000                                  // Far clipping pane
 );
 
 //Renderer 
@@ -47,7 +47,6 @@ function buildScene(){
         gltf.scene.traverse( function (obj) {
             if(obj.isMesh){
                 let material = new THREE.MeshBasicMaterial({color: "#000000"});
-                //let geometry = new THREE.BufferGeometry(0.5, 0.5);
                 let occlusionObject = new THREE.Mesh(obj.geometry, material)
                 occlusionObject.layers.set(OCCLUSION_LAYER)
                 if (obj.parent != null){
