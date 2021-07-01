@@ -16,11 +16,13 @@ const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
+const axesHelper = new THREE.AxesHelper(10);
+
 const scene = new THREE.Scene();
 
 //Camera
 const camera = new THREE.PerspectiveCamera(
-    75,                                   // Field of view
+    750,                                   // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1,                                  // Near clipping pane
     1000                                  // Far clipping pane
@@ -43,15 +45,27 @@ const loader = new GLTFLoader();
 
 function buildScene(){
     loader.load(testfile, function ( gltf ) {
-        let material = new THREE.MeshBasicMaterial({color: "#000000"});
-        let geometry = new THREE.PlaneGeometry(0.5, 0.5);
-        let occlusionObject = new THREE.Mesh(geometry, material)
+        gltf.scene.traverse( function (obj) {
+            if(obj.isMesh){
+                let material = new THREE.MeshBasicMaterial({color: "#000000"});
+                //let geometry = new THREE.PlaneGeometry(0.5, 0.5);
+                let occlusionObject = new THREE.Mesh(obj.geometry, material)
+                obj.add(axesHelper);
+                occlusionObject.add(new THREE.AxesHelper(100));
+                occlusionObject.layers.set(OCCLUSION_LAYER)
+                if (obj.parent != null){
+                    obj.parent.add(occlusionObject)
+                }
+       
+            }
+        })
+
         scene.add(gltf.scene);
-    
-        occlusionObject.add(new THREE.AxesHelper(10));
-        occlusionObject.layers.set(OCCLUSION_LAYER)
-        scene.add(gltf.scene);
-            gltf.scene.position.z = 2;
+            gltf.scene.position.x = 3;
+            gltf.scene.position.y = 3;
+            gltf.scene.position.z = 3;
+            gltf.scene.visible = true;
+            
     }, function ( error ) {
         console.error( error );
     } );
@@ -62,7 +76,7 @@ function buildScene(){
     scene.add(ambientLight);
     
     //PointLight
-    let pointLight = new THREE.PointLight("#000000");
+    let pointLight = new THREE.PointLight("#fffffff");
     scene.add(pointLight);
     
     //SphereGeometry
@@ -72,9 +86,8 @@ function buildScene(){
     lightSphere.layers.set(OCCLUSION_LAYER)
     scene.add(lightSphere);
     
-    camera.position.z = 6;
+    camera.position.z = 200;
     controls.update();
-    
 }
 
 
@@ -86,8 +99,8 @@ const occlusionShader = {
         exposure: {value: 0.05},
         decay: {value: 0.99},
         density: {value: 0.8},
-        weight: {value: 0.8},
-        samples: {value: 200}
+        weight: {value: 1.8},
+        samples: {value: 100}
     },
 
     vertexShader: passThroughVertexShader,
@@ -152,7 +165,6 @@ let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera)
 
 function render(camera) {
     camera.layers.set(OCCLUSION_LAYER);
-    renderer.setClearColor('#342f46')
 
     // call the render method of the composer
     occlusionComposer.render();
