@@ -11,6 +11,8 @@ import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import testfile from "../models/scene.gltf";
 
+import dat from 'dat.gui';
+
 // Layers
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
@@ -48,7 +50,6 @@ function buildScene(){
         gltf.scene.traverse( function (obj) {
             if(obj.isMesh){
                 let material = new THREE.MeshBasicMaterial({color: "#000000"});
-                //let geometry = new THREE.BufferGeometry(0.5, 0.5);
                 let occlusionObject = new THREE.Mesh(obj.geometry, material)
                 obj.add(axesHelper);
                 occlusionObject.add(new THREE.AxesHelper(100));
@@ -61,13 +62,13 @@ function buildScene(){
         })
 
         scene.add(gltf.scene);
-            gltf.scene.position.x = 3;
-            gltf.scene.position.y = -0.5;
-            gltf.scene.position.z = 5;
-            gltf.scene.visible = true;
+        gltf.scene.position.x = 3;
+        gltf.scene.position.y = -0.5;
+        gltf.scene.position.z = 5;
+        gltf.scene.visible = true;
             
     }, function ( error ) {
-        console.error( error );
+        // console.error( error );
     } );
     
     
@@ -87,8 +88,12 @@ function buildScene(){
     lightSphere.layers.set(OCCLUSION_LAYER)
     scene.add(lightSphere);
     
+
+    setUpGUI(pointLight,lightSphere)
     camera.position.z = 200;
     controls.update();
+
+   
 }
 
 
@@ -137,6 +142,7 @@ function composeEffects(renderer, scene, camera){
 
     //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
+     let shaderUniforms = scatteringPass.uniforms;
     occlusionComposer.addPass(scatteringPass);
    
     // Copy Shader
@@ -166,8 +172,7 @@ let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera)
 
 function render(camera) {
     camera.layers.set(OCCLUSION_LAYER);
-    
-
+    renderer.setClearColor('#342f46')
     // call the render method of the composer
     occlusionComposer.render();
 
@@ -184,6 +189,66 @@ function onFrame(camera) {
     update();
     render(camera);
 }
+
+
+function updateShaderLightPosition(lightSphere) {
+    let screenPosition = lightSphere.position.clone().project(camera);
+    let newX = 0.5 * (screenPosition.x + 1);
+    let newY = 0.5 * (screenPosition.y + 1);
+    let shaderUniforms = occlusionComposer.passes[1].uniforms;
+    shaderUniforms.lightPosition.value.set(newX, newY)
+
+}
+
+
+function setUpGUI(pointLight, lightSphere ) {
+    let gui = new dat.GUI();
+    let shaderUniforms = occlusionComposer.passes[1].uniforms;
+    gui.addFolder("Light Position")
+    let xController = gui.add(lightSphere.position, "x", -10, 10, 0.01);
+    let yController = gui.add(lightSphere.position, "y", -10, 10, 0.01);
+    let zController = gui.add(lightSphere.position, "z", -20, 20, 0.01);
+
+    controls.addEventListener("change", () => updateShaderLightPosition(lightSphere))
+
+    xController.onChange(x => {
+        pointLight.position.x = x;
+        updateShaderLightPosition(lightSphere);
+    })
+    yController.onChange(y => {
+        pointLight.position.y = y;
+        updateShaderLightPosition(lightSphere);
+    })
+    zController.onChange(z => {
+        pointLight.position.z = z;
+        updateShaderLightPosition(lightSphere);
+    })
+
+    gui.addFolder("Volumetric scattering parameters");
+    Object.keys(shaderUniforms).forEach((k) => {
+        if (k != "tDiffuse" && k != "lightPosition") {
+            let prop = shaderUniforms[k]
+            switch (k) {
+                case "weight":
+                    gui.add(prop, "value", 0, 1, 0.01).name(k);
+                    break;
+                case "exposure":
+                    gui.add(prop, "value", 0, 1, 0.01).name(k);
+                    break;
+                case "decay":
+                    gui.add(prop, "value", 0.8, 1, 0.001).name(k);
+                    break;
+                case "density":
+                    gui.add(prop, "value", 0, 1, 0.01).name(k);
+                    break;
+                case "samples":
+                    gui.add(prop, "value", 0, 200, 1).name(k);
+                    break;
+            }
+        }
+    })
+}
+
 
 buildScene();
 onFrame(camera);
