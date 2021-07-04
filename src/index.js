@@ -46,33 +46,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const loader = new GLTFLoader();
 
 
-function buildScene(){
-    loader.load(testfile, function ( gltf ) {
-        gltf.scene.traverse( function (obj) {
-            if(obj.isMesh){
-                let material = new THREE.MeshBasicMaterial({color: "#000000"});
-                let occlusionObject = new THREE.Mesh(obj.geometry, material)
-                obj.add(axesHelper);
-                occlusionObject.add(new THREE.AxesHelper(100));
-                occlusionObject.layers.set(OCCLUSION_LAYER)
-                if (obj.parent != null){
-                    obj.parent.add(occlusionObject)
-                }
-       
-            }
-        })
-
-        scene.add(gltf.scene);
-        gltf.scene.position.x = 3;
-        gltf.scene.position.y = -0.5;
-        gltf.scene.position.z = 5;
-        gltf.scene.visible = true;
-            
-    }, function ( error ) {
-        // console.error( error );
-    } );
-    
-    
+function buildLight(){
     //AmbientLight
     let ambientLight = new THREE.AmbientLight("#2c3e50");
     scene.add(ambientLight);
@@ -135,6 +109,37 @@ function buildScene(){
      
     };
     loop();
+
+    return [lightSphere, pointLight]
+}
+
+let [lightSphere, pointLight] = buildLight();
+
+function buildScene(){
+    loader.load(testfile, function ( gltf ) {
+        gltf.scene.traverse( function (obj) {
+            if(obj.isMesh){
+                let material = new THREE.MeshBasicMaterial({color: "#000000"});
+                let occlusionObject = new THREE.Mesh(obj.geometry, material)
+                obj.add(axesHelper);
+                occlusionObject.add(new THREE.AxesHelper(100));
+                occlusionObject.layers.set(OCCLUSION_LAYER)
+                if (obj.parent != null){
+                    obj.parent.add(occlusionObject)
+                }
+       
+            }
+        })
+
+        scene.add(gltf.scene);
+        gltf.scene.position.x = 3;
+        gltf.scene.position.y = -0.5;
+        gltf.scene.position.z = 5;
+        gltf.scene.visible = true;
+            
+    }, function ( error ) {
+        // console.error( error );
+    } );
    
 
     setUpGUI(pointLight,lightSphere)
@@ -143,10 +148,6 @@ function buildScene(){
 
 
 }
-
-
-
-  
 
 
 // Shaders
@@ -217,7 +218,9 @@ function composeEffects(renderer, scene, camera){
 
 
 
-function update() {}
+function update() {
+    updateShaderLightPosition(lightSphere)
+}
 
 let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera);
 
