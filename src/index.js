@@ -27,7 +27,7 @@ const camera = new THREE.PerspectiveCamera(
     5,                                   // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1,                                  // Near clipping pane
-    1000                             // Far clipping pane
+    10000                             // Far clipping pane
 );
 
 //Renderer 
@@ -44,6 +44,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 //Loader
 const loader = new GLTFLoader();
+
 
 function buildScene(){
     loader.load(testfile, function ( gltf ) {
@@ -81,20 +82,71 @@ function buildScene(){
     scene.add(pointLight);
     
     //SphereGeometry
-    let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
+    let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
     let material = new THREE.MeshBasicMaterial({color: 0xffffff});
     let lightSphere = new THREE.Mesh(geometry, material);
     lightSphere.add(new THREE.AxesHelper(100));
     lightSphere.layers.set(OCCLUSION_LAYER)
     scene.add(lightSphere);
+   
+
+
+    // loop
+    var frame = 0,
+    maxFrame = 360,
+    lt = new Date(),
+    fps = 60,
+    per,
+    bias,
+    loop = function () {
+        requestAnimationFrame(loop);
+        var r = Math.PI * 2 * per,
+        sin = Math.sin(r) * 30,
+        cos = Math.cos(r) * 30,
+        now = new Date(),
+        secs = (now - lt) / 1000;
+     
+        per = frame / maxFrame;
+        bias = 1 - Math.abs(0.5 - per) / 0.5;
+     
+        if (secs > 1 / fps) {
+     
+            // update point lights
+            pointLight.position.x = 30 * bias;
+            lightSphere.position.x = 30 * bias;
     
+            pointLight.position.z = 30 * bias;
+            lightSphere.position.z = 30 * bias;
+
+
+
+    
+            // render
+            lt = new Date();
+     
+            // step frame
+            frame += fps * secs;
+            frame %= maxFrame;
+
+            updateShaderLightPosition(lightSphere)
+    
+        }
+
+     
+    };
+    loop();
+   
 
     setUpGUI(pointLight,lightSphere)
     camera.position.z = 200;
     controls.update();
 
-   
+
 }
+
+
+
+  
 
 
 // Shaders
@@ -142,7 +194,6 @@ function composeEffects(renderer, scene, camera){
 
     //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
-     let shaderUniforms = scatteringPass.uniforms;
     occlusionComposer.addPass(scatteringPass);
    
     // Copy Shader
@@ -195,16 +246,17 @@ function updateShaderLightPosition(lightSphere) {
     let screenPosition = lightSphere.position.clone().project(camera);
     let newX = 0.5 * (screenPosition.x + 1);
     let newY = 0.5 * (screenPosition.y + 1);
+    let newZ = 0.5 * (screenPosition.z + 1);
     let shaderUniforms = occlusionComposer.passes[1].uniforms;
-    shaderUniforms.lightPosition.value.set(newX, newY)
-
+    shaderUniforms.lightPosition.value.set(newX, newY, newZ)
 }
 
 
-function setUpGUI(pointLight, lightSphere ) {
+function setUpGUI(pointLight, lightSphere) {
     let gui = new dat.GUI();
     let shaderUniforms = occlusionComposer.passes[1].uniforms;
-    gui.addFolder("Light Position")
+    
+    gui.addFolder("Light Position");
     let xController = gui.add(lightSphere.position, "x", -10, 10, 0.01);
     let yController = gui.add(lightSphere.position, "y", -10, 10, 0.01);
     let zController = gui.add(lightSphere.position, "z", -20, 20, 0.01);
@@ -214,15 +266,19 @@ function setUpGUI(pointLight, lightSphere ) {
     xController.onChange(x => {
         pointLight.position.x = x;
         updateShaderLightPosition(lightSphere);
+
     })
     yController.onChange(y => {
         pointLight.position.y = y;
         updateShaderLightPosition(lightSphere);
+
     })
     zController.onChange(z => {
         pointLight.position.z = z;
         updateShaderLightPosition(lightSphere);
     })
+
+  
 
     gui.addFolder("Volumetric scattering parameters");
     Object.keys(shaderUniforms).forEach((k) => {
@@ -247,8 +303,8 @@ function setUpGUI(pointLight, lightSphere ) {
             }
         }
     })
-}
 
+}
 
 buildScene();
 onFrame(camera);
