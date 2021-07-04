@@ -45,7 +45,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 //Loader
 const loader = new GLTFLoader();
 
-
+// Build Light
 function buildLight(){
     //AmbientLight
     let ambientLight = new THREE.AmbientLight("#2c3e50");
@@ -65,50 +65,50 @@ function buildLight(){
    
 
 
-    // loop
-    var frame = 0,
-    maxFrame = 360,
-    lt = new Date(),
-    fps = 60,
-    per,
-    bias,
-    loop = function () {
-        requestAnimationFrame(loop);
-        var r = Math.PI * 2 * per,
-        sin = Math.sin(r) * 30,
-        cos = Math.cos(r) * 30,
-        now = new Date(),
-        secs = (now - lt) / 1000;
+    // // loop
+    // var frame = 0,
+    // maxFrame = 360,
+    // lt = new Date(),
+    // fps = 60,
+    // per,
+    // bias,
+    // loop = function () {
+    //     requestAnimationFrame(loop);
+    //     var r = Math.PI * 2 * per,
+    //     sin = Math.sin(r) * 30,
+    //     cos = Math.cos(r) * 30,
+    //     now = new Date(),
+    //     secs = (now - lt) / 1000;
      
-        per = frame / maxFrame;
-        bias = 1 - Math.abs(0.5 - per) / 0.5;
+    //     per = frame / maxFrame;
+    //     bias = 1 - Math.abs(0.5 - per) / 0.5;
      
-        if (secs > 1 / fps) {
+    //     if (secs > 1 / fps) {
      
-            // update point lights
-            pointLight.position.x = 30 * bias;
-            lightSphere.position.x = 30 * bias;
+    //         // update point lights
+    //         pointLight.position.x = 30 * bias;
+    //         lightSphere.position.x = 30 * bias;
     
-            pointLight.position.z = 30 * bias;
-            lightSphere.position.z = 30 * bias;
+    //         pointLight.position.z = 30 * bias;
+    //         lightSphere.position.z = 30 * bias;
 
 
 
     
-            // render
-            lt = new Date();
+    //         // render
+    //         lt = new Date();
      
-            // step frame
-            frame += fps * secs;
-            frame %= maxFrame;
+    //         // step frame
+    //         frame += fps * secs;
+    //         frame %= maxFrame;
 
-            updateShaderLightPosition(lightSphere)
+    //         updateShaderLightPosition(lightSphere)
     
-        }
+    //     }
 
      
-    };
-    loop();
+    // };
+    // loop();
 
     return [lightSphere, pointLight]
 }
@@ -284,29 +284,33 @@ function setUpGUI(pointLight, lightSphere) {
   
 
     gui.addFolder("Volumetric scattering parameters");
-    Object.keys(shaderUniforms).forEach((k) => {
-        if (k != "tDiffuse" && k != "lightPosition") {
-            let prop = shaderUniforms[k]
-            switch (k) {
-                case "weight":
-                    gui.add(prop, "value", 0, 1, 0.01).name(k);
-                    break;
-                case "exposure":
-                    gui.add(prop, "value", 0, 1, 0.01).name(k);
-                    break;
-                case "decay":
-                    gui.add(prop, "value", 0.8, 1, 0.001).name(k);
-                    break;
-                case "density":
-                    gui.add(prop, "value", 0, 1, 0.01).name(k);
-                    break;
-                case "samples":
-                    gui.add(prop, "value", 0, 200, 1).name(k);
-                    break;
-            }
-        }
-    })
-
+    // Object.keys(shaderUniforms).forEach((k) => {
+    //     if (k != "tDiffuse" && k != "lightPosition") {
+    //         let prop = shaderUniforms[k]
+    //         switch (k) {
+    //             case "weight":
+    //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
+    //                 break;
+    //             case "exposure":
+    //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
+    //                 break;
+    //             case "decay":
+    //                 gui.add(prop, "value", 0.8, 1, 0.001).name(k);
+    //                 break;
+    //             case "density":
+    //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
+    //                 break;
+    //             case "samples":
+    //                 gui.add(prop, "value", 0, 200, 1).name(k);
+    //                 break;
+    //         }
+    //     }
+    // })
+    gui.add(shaderUniforms.weight, "value", 0, 1, 0.01).name('Weight');
+    gui.add(shaderUniforms.exposure, "value", 0, 1, 0.01).name("Exposure");
+    gui.add(shaderUniforms.decay, "value", 0.8, 1, 0.001).name("Decay");
+    gui.add(shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
+    gui.add(shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 }
 
 buildScene();
