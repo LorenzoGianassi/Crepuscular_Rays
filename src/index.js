@@ -32,12 +32,18 @@ const camera = new THREE.PerspectiveCamera(
 
 //Renderer 
 var renderer = new THREE.WebGLRenderer();
-renderer.setPixelRatio(window.devicePixelRatio);
+
+//Windows scale bug
+function windowsUpdate(){
+    renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = "absolute";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 document.body.appendChild(renderer.domElement);
+}
+
+windowsUpdate();
 
 //Control Camera
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -136,6 +142,7 @@ function buildScene(){
         gltf.scene.position.y = -0.5;
         gltf.scene.position.z = 5;
         gltf.scene.visible = true;
+
             
     }, function ( error ) {
         // console.error( error );
@@ -145,8 +152,6 @@ function buildScene(){
     setUpGUI(pointLight,lightSphere)
     camera.position.z = 200;
     controls.update();
-
-
 }
 
 
@@ -220,6 +225,7 @@ function composeEffects(renderer, scene, camera){
 
 function update() {
     updateShaderLightPosition(lightSphere)
+    windowsUpdate();
 }
 
 let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera);
