@@ -17,6 +17,34 @@ import { AbstractScene } from "./AbstractScene";
 
 import { FirstScene } from "./FirstScene";
 
+
+
+// Shaders
+const occlusionShader = {
+    uniforms: {
+        tDiffuse: { value: null },
+        lightPosition: { value: new THREE.Vector2(0.5, 0.5) },
+        exposure: { value: 0.05 },
+        decay: { value: 0.99 },
+        density: { value: 0.8 },
+        weight: { value: 0.8 },
+        samples: { value: 100 }
+    },
+
+    vertexShader: passThroughVertexShader,
+    fragmentShader: scatteringFragmentShader
+}
+
+const blendingShader = {
+    uniforms: {
+        tDiffuse: { value: null },
+        tOcclusion: { value: null }
+    },
+
+    vertexShader: passThroughVertexShader,
+    fragmentShader: blendingFragmentShader
+}
+
 // Layers
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
@@ -25,7 +53,22 @@ const LOADING_LAYER = 2;
 //const axesHelper = new THREE.AxesHelper(10);
 
 
+//Renderer 
+const renderer = new THREE.WebGLRenderer();
 
+const camera = new THREE.PerspectiveCamera(
+    5,                                   // Field of view
+    window.innerWidth / window.innerHeight, // Aspect ratio
+    0.1,                                  // Near clipping pane
+    10000                             // Far clipping pane
+);
+let scene = new THREE.Scene();
+let gui = new dat.GUI();
+let controls = new OrbitControls(camera, renderer.domElement);
+let pointLight = undefined;
+
+
+let firstScene = new FirstScene(camera,gui,controls)
 
 /*
 //Camera
@@ -37,8 +80,6 @@ const camera = new THREE.PerspectiveCamera(
 );
 */
 
-//Renderer 
-const renderer = new THREE.WebGLRenderer();
 
 //Windows scale bug
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -54,7 +95,7 @@ const renderer = new THREE.WebGLRenderer();
 //Loader
 const loader = new GLTFLoader();
 
-let scene = new FirstScene();
+//let scene = new FirstScene();
 
 export { renderer, occlusionShader, blendingShader, loader, OCCLUSION_LAYER, DEFAULT_LAYER, updateShaderLightPosition };
 
@@ -165,31 +206,6 @@ function buildScene() {
 */
 
 
-// Shaders
-const occlusionShader = {
-    uniforms: {
-        tDiffuse: { value: null },
-        lightPosition: { value: new THREE.Vector2(0.5, 0.5) },
-        exposure: { value: 0.05 },
-        decay: { value: 0.99 },
-        density: { value: 0.8 },
-        weight: { value: 0.8 },
-        samples: { value: 100 }
-    },
-
-    vertexShader: passThroughVertexShader,
-    fragmentShader: scatteringFragmentShader
-}
-
-const blendingShader = {
-    uniforms: {
-        tDiffuse: { value: null },
-        tOcclusion: { value: null }
-    },
-
-    vertexShader: passThroughVertexShader,
-    fragmentShader: blendingFragmentShader
-}
 
 /*
 // PostProcessing
@@ -261,16 +277,16 @@ function onFrame() {
   //requestAnimationFrame(() => onFrame(camera));
   //  controls.update();
   //  update();
-    scene.render();
+    firstScene.render();
 }
 
 
-function updateShaderLightPosition(lightSphere) {
-    let screenPosition = lightSphere.position.clone().project(camera);
+function updateShaderLightPosition(firstScene) {
+    let screenPosition = firstScene.lightSphere.position.clone().project(camera);
     let newX = 0.5 * (screenPosition.x + 1);
     let newY = 0.5 * (screenPosition.y + 1);
     let newZ = 0.5 * (screenPosition.z + 1);
-    let shaderUniforms = occlusionComposer.passes[1].uniforms;
+    let shaderUniforms = firstScene.occlusionComposer.passes[1].uniforms;
     shaderUniforms.lightPosition.value.set(newX, newY, newZ)
 }
 
@@ -334,7 +350,7 @@ function setUpGUI(pointLight, lightSphere) {
 }
 */
 
-
+/*
 function setUpSceneSelection() {
     let gui = new dat.GUI();
     gui.domElement.style.float = "left";
@@ -354,10 +370,11 @@ function setUpSceneSelection() {
     })
     sceneSelector.setValue("Skull1");
 }
+*/
 
 
 
-setUpSceneSelection()
+//setUpSceneSelection()
 
 //buildScene();
 onFrame();

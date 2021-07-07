@@ -5,46 +5,61 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
 import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader";
 import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { blendingShader, occlusionShader, renderer } from "./index.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GUI } from 'dat.gui';
 import dat from 'dat.gui';
 import { Scene } from 'three';
 
-/**
- @constructor
- @abstract
- */
-export var AbstractScene = function () {
+ export class AbstractScene {
 
-  this.camera = new THREE.PerspectiveCamera();
-  this.scene = new THREE.Scene();
-  this.gui = new dat.GUI();
-  this.controls = new OrbitControls(camera, renderer.domElement);
+  constructor(camera, gui,controls) {
+
+    this.loader = new GLTFLoader();
+    this.camera = camera
+
+    this.gui = gui
+    this.controls = controls
 
 
-/**
- @abstract
- */
-AbstractScene.prototype.render = function () {  };
 
-/**
- @abstract
- */
-AbstractScene.prototype.destroyGUI = function () {
-  this.gui.destroy();
-};
+    /*
+    this.camera = new THREE.PerspectiveCamera();
+    this.scene = new THREE.Scene();
+    this.gui = new dat.GUI();
+    this.controls = new OrbitControls(this.camera, renderer.domElement);
+    this.pointLight = undefined;
+    this.lightSphere = undefined;
+    */
 
-/**
- @abstract
- */
-AbstractScene.prototype.buildGUI = function () { };
+    if (this.constructor == AbstractScene) {
+      throw new Error("Abstract classes can't be instantiated.");
+    }
+  }
 
-/**
- @abstract
- */
-AbstractScene.prototype.composeEffects = function () {
-  // PostProcessing
+  render() {
+    throw new Error("Method must be implemented.");
+  }
+
+  buildGUI(){
+    throw new Error("Method must be implemented.");
+  }
+
+  destroyGUI(){
+    this.gui.destroy();
+  }
+
+  buildLight(scene){
+    throw new Error("Method must be implemented.");
+  }
+
+  buildScene(scene){
+    throw new Error("Method must be implemented.");
+  }
+
+  composeEffects(){
+    // PostProcessing
   const renderTargetParameters = {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
@@ -65,12 +80,12 @@ AbstractScene.prototype.composeEffects = function () {
 
   //HorizonatlBlur
   let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
-  horizontalBlurPass.uniforms.h.value = 0.4 / occlusionRenderTarget.height;
+  horizontalBlurPass.uniforms.h.value = 0.4 / target.height;
   // occlusionComposer.addPass(horizontalBlurPass);
 
   //VerticalBlur
   let verticalBlurPass = new ShaderPass(VerticalBlurShader);
-  verticalBlurPass.uniforms.v.value = 0.4 / occlusionRenderTarget.width;
+  verticalBlurPass.uniforms.v.value = 0.4 / target.width;
   // occlusionComposer.addPass(verticalBlurPass);
 
   // Copy Shader
@@ -89,10 +104,9 @@ AbstractScene.prototype.composeEffects = function () {
   sceneComposer.addPass(blendingPass);
 
   return [occlusionComposer, sceneComposer]
+  }
+
 }
 
-  if (this.constructor === AbstractScene) {
-    throw new Error('Cannot instanciate abstract class');
-  }
-};
+
 
