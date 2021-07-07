@@ -1,27 +1,33 @@
-import * as THREE from 'three';
 
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
-import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass";
-import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
-import {CopyShader} from "three/examples/jsm/shaders/CopyShader";
+
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
+import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
 import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import testfile from "../models/scene.gltf";
 
 import dat from 'dat.gui';
+import * as THREE from 'three';
+import { AbstractScene } from "./AbstractScene";
+
+import { FirstScene } from "./FirstScene";
 
 // Layers
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
-const axesHelper = new THREE.AxesHelper(10);
+//const axesHelper = new THREE.AxesHelper(10);
 
-const scene = new THREE.Scene();
 
+
+
+/*
 //Camera
 const camera = new THREE.PerspectiveCamera(
     5,                                   // Field of view
@@ -29,46 +35,48 @@ const camera = new THREE.PerspectiveCamera(
     0.1,                                  // Near clipping pane
     10000                             // Far clipping pane
 );
+*/
 
 //Renderer 
-var renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer();
 
 //Windows scale bug
-function windowsUpdate(){
     renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.domElement.style.position = "absolute";
-renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
-document.body.appendChild(renderer.domElement);
-}
-
-windowsUpdate();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.top = "0";
+    renderer.domElement.style.left = "0";
+    document.body.appendChild(renderer.domElement);
 
 //Control Camera
-const controls = new OrbitControls(camera, renderer.domElement);
+//const controls = new OrbitControls(camera, renderer.domElement);
 
 //Loader
 const loader = new GLTFLoader();
 
+let scene = new FirstScene();
+
+export { renderer, occlusionShader, blendingShader, loader, OCCLUSION_LAYER, DEFAULT_LAYER, updateShaderLightPosition };
+
+/*
 // Build Light
-function buildLight(){
+function buildLight() {
     //AmbientLight
     let ambientLight = new THREE.AmbientLight("#2c3e50");
     scene.add(ambientLight);
-    
+
     //PointLight
     let pointLight = new THREE.PointLight("#fffffff");
     scene.add(pointLight);
-    
+
     //SphereGeometry
     let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
-    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
+    let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     let lightSphere = new THREE.Mesh(geometry, material);
     lightSphere.add(new THREE.AxesHelper(100));
     lightSphere.layers.set(OCCLUSION_LAYER)
     scene.add(lightSphere);
-   
+
 
 
     // // loop
@@ -85,34 +93,34 @@ function buildLight(){
     //     cos = Math.cos(r) * 30,
     //     now = new Date(),
     //     secs = (now - lt) / 1000;
-     
+
     //     per = frame / maxFrame;
     //     bias = 1 - Math.abs(0.5 - per) / 0.5;
-     
+
     //     if (secs > 1 / fps) {
-     
+
     //         // update point lights
     //         pointLight.position.x = 30 * bias;
     //         lightSphere.position.x = 30 * bias;
-    
+
     //         pointLight.position.z = 30 * bias;
     //         lightSphere.position.z = 30 * bias;
 
 
 
-    
+
     //         // render
     //         lt = new Date();
-     
+
     //         // step frame
     //         frame += fps * secs;
     //         frame %= maxFrame;
 
     //         updateShaderLightPosition(lightSphere)
-    
+
     //     }
 
-     
+
     // };
     // loop();
 
@@ -120,20 +128,21 @@ function buildLight(){
 }
 
 let [lightSphere, pointLight] = buildLight();
-
-function buildScene(){
-    loader.load(testfile, function ( gltf ) {
-        gltf.scene.traverse( function (obj) {
-            if(obj.isMesh){
-                let material = new THREE.MeshBasicMaterial({color: "#000000"});
+*/
+/*
+function buildScene() {
+    loader.load(testfile, function (gltf) {
+        gltf.scene.traverse(function (obj) {
+            if (obj.isMesh) {
+                let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                 let occlusionObject = new THREE.Mesh(obj.geometry, material)
                 obj.add(axesHelper);
                 occlusionObject.add(new THREE.AxesHelper(100));
                 occlusionObject.layers.set(OCCLUSION_LAYER)
-                if (obj.parent != null){
+                if (obj.parent != null) {
                     obj.parent.add(occlusionObject)
                 }
-       
+
             }
         })
 
@@ -143,28 +152,29 @@ function buildScene(){
         gltf.scene.position.z = 5;
         gltf.scene.visible = true;
 
-            
-    }, function ( error ) {
-        // console.error( error );
-    } );
-   
 
-    setUpGUI(pointLight,lightSphere)
+    }, function (error) {
+        // console.error( error );
+    });
+
+
+    setUpGUI(pointLight, lightSphere)
     camera.position.z = 200;
     controls.update();
 }
+*/
 
 
 // Shaders
 const occlusionShader = {
     uniforms: {
-        tDiffuse: {value: null},
-        lightPosition: {value: new THREE.Vector2(0.5, 0.5)},
-        exposure: {value: 0.05},
-        decay: {value: 0.99},
-        density: {value: 0.8},
-        weight: {value: 0.8},
-        samples: {value: 100}
+        tDiffuse: { value: null },
+        lightPosition: { value: new THREE.Vector2(0.5, 0.5) },
+        exposure: { value: 0.05 },
+        decay: { value: 0.99 },
+        density: { value: 0.8 },
+        weight: { value: 0.8 },
+        samples: { value: 100 }
     },
 
     vertexShader: passThroughVertexShader,
@@ -173,17 +183,17 @@ const occlusionShader = {
 
 const blendingShader = {
     uniforms: {
-        tDiffuse: {value: null},
-        tOcclusion: {value: null}
+        tDiffuse: { value: null },
+        tOcclusion: { value: null }
     },
 
     vertexShader: passThroughVertexShader,
     fragmentShader: blendingFragmentShader
 }
 
-
+/*
 // PostProcessing
-function composeEffects(renderer, scene, camera){
+function composeEffects(renderer, scene, camera) {
     const renderTargetParameters = {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -192,16 +202,16 @@ function composeEffects(renderer, scene, camera){
     };
 
     // A preconfigured render target internally used by EffectComposer.
-	let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
+    let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
     //OcclusionComposer
-    let occlusionComposer = new EffectComposer(renderer,target); 
+    let occlusionComposer = new EffectComposer(renderer, target);
     occlusionComposer.addPass(new RenderPass(scene, camera));
 
     //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
     occlusionComposer.addPass(scatteringPass);
-   
+
     // Copy Shader
     let finalPass = new ShaderPass(CopyShader);
     occlusionComposer.addPass(finalPass);
@@ -214,22 +224,24 @@ function composeEffects(renderer, scene, camera){
     //Blending Pass
     let blendingPass = new ShaderPass(blendingShader);
     blendingPass.uniforms.tOcclusion.value = target.texture;
-    
+
     blendingPass.renderToScreen = true; // Whether the final pass is rendered to the screen (default framebuffer) or not.
     sceneComposer.addPass(blendingPass);
 
     return [occlusionComposer, sceneComposer]
 }
+*/
 
-
-
+/*
 function update() {
     updateShaderLightPosition(lightSphere)
     windowsUpdate();
 }
 
 let [occlusionComposer, sceneComposer] = composeEffects(renderer, scene, camera);
+*/
 
+/*
 function render(camera) {
     camera.layers.set(OCCLUSION_LAYER);
     renderer.setClearColor('#342f46')
@@ -242,12 +254,14 @@ function render(camera) {
     // call the render method of the composer
     sceneComposer.render();
 }
+*/
 
-function onFrame(camera) {
-    requestAnimationFrame(() => onFrame(camera));
-    controls.update();
-    update();
-    render(camera);
+function onFrame() {
+    requestAnimationFrame(onFrame);
+  //requestAnimationFrame(() => onFrame(camera));
+  //  controls.update();
+  //  update();
+    scene.render();
 }
 
 
@@ -260,11 +274,11 @@ function updateShaderLightPosition(lightSphere) {
     shaderUniforms.lightPosition.value.set(newX, newY, newZ)
 }
 
-
+/*
 function setUpGUI(pointLight, lightSphere) {
     let gui = new dat.GUI();
     let shaderUniforms = occlusionComposer.passes[1].uniforms;
-    
+
     gui.addFolder("Light Position");
     let xController = gui.add(lightSphere.position, "x", -10, 10, 0.01);
     let yController = gui.add(lightSphere.position, "y", -10, 10, 0.01);
@@ -287,7 +301,7 @@ function setUpGUI(pointLight, lightSphere) {
         updateShaderLightPosition(lightSphere);
     })
 
-  
+
 
     gui.addFolder("Volumetric scattering parameters");
     // Object.keys(shaderUniforms).forEach((k) => {
@@ -318,6 +332,32 @@ function setUpGUI(pointLight, lightSphere) {
     gui.add(shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
     gui.add(shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 }
+*/
 
-buildScene();
-onFrame(camera);
+
+function setUpSceneSelection() {
+    let gui = new dat.GUI();
+    gui.domElement.style.float = "left";
+    gui.addFolder("Scene selection")
+
+    let scenes = {
+        "Skull1": FirstScene,
+    }
+
+    let sceneSelector = gui.add({scene}, "scene", Object.keys(scenes));
+    sceneSelector.onChange((selectedScene) => {
+        let oldScene = scene;
+        oldScene.destroyGUI();
+        // @ts-ignore
+        scene = new scenes[selectedScene]();
+
+    })
+    sceneSelector.setValue("Skull1");
+}
+
+
+
+setUpSceneSelection()
+
+//buildScene();
+onFrame();
