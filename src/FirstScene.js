@@ -25,25 +25,21 @@ export class FirstScene extends AbstractScene {
     lightSphere = undefined;
     */
 
-    constructor(camera, gui, controls) {
-        super(camera,  gui, controls);
-        this.scene = new THREE.Scene;
+    constructor(camera, gui) {
+        super(camera,  gui);
+        // this.scene = new THREE.Scene;
         this.ambientLight = new THREE.AmbientLight("#2c3e50");
         this.pointLight = new THREE.PointLight("#fffffff");
         let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
-        this.buildLight(this.scene);
         this.buildScene(this.scene);
-        let efffectcomposer = this.composeEffects();
-        this.sceneComposer = efffectcomposer[1];
-        this.occlusionComposer = efffectcomposer[0];
-        this.buildGUI();
     }
 
 
     render() {
         this.controls.update();
+        // updateShaderLightPosition();
 
         this.camera.layers.set(OCCLUSION_LAYER);
         renderer.setClearColor("#111111")
@@ -55,15 +51,15 @@ export class FirstScene extends AbstractScene {
         this.sceneComposer.render();
     }
 
-    buildLight(scene) {
+    buildLight() {
         //AmbientLight
-        scene.add(this.ambientLight);
+        this.scene.add(this.ambientLight);
         //PointLight
-        scene.add(this.pointLight);
+        this.scene.add(this.pointLight);
         //SphereGeometry
         this.lightSphere.add(new THREE.AxesHelper(100));
         this.lightSphere.layers.set(OCCLUSION_LAYER)
-        scene.add(this.lightSphere);
+        this.scene.add(this.lightSphere);
 
 
     }
@@ -98,12 +94,13 @@ export class FirstScene extends AbstractScene {
 
         this.camera.position.z = 200;
         this.controls.update();
-    }
+        this.buildLight(this.scene);
+        this.buildGUI();
 
+    }
 
     buildGUI() {
         let shaderUniforms = this.occlusionComposer.passes[1].uniforms;
-
         this.gui.addFolder("Light Position");
         let xController = this.gui.add(this.lightSphere.position, "x", -10, 10, 0.01);
         let yController = this.gui.add(this.lightSphere.position, "y", -10, 10, 0.01);
@@ -113,44 +110,23 @@ export class FirstScene extends AbstractScene {
 
         xController.onChange(x => {
             this.pointLight.position.x = x;
-            updateShaderLightPosition(lightSphere);
+            updateShaderLightPosition(this.lightSphere);
 
         })
         yController.onChange(y => {
             this.pointLight.position.y = y;
-            updateShaderLightPosition(lightSphere);
+            updateShaderLightPosition(this.lightSphere);
 
         })
         zController.onChange(z => {
             this.pointLight.position.z = z;
-            updateShaderLightPosition(lightSphere);
+            updateShaderLightPosition(this.lightSphere);
         })
 
 
 
         this.gui.addFolder("Volumetric scattering parameters");
-        // Object.keys(shaderUniforms).forEach((k) => {
-        //     if (k != "tDiffuse" && k != "lightPosition") {
-        //         let prop = shaderUniforms[k]
-        //         switch (k) {
-        //             case "weight":
-        //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
-        //                 break;
-        //             case "exposure":
-        //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
-        //                 break;
-        //             case "decay":
-        //                 gui.add(prop, "value", 0.8, 1, 0.001).name(k);
-        //                 break;
-        //             case "density":
-        //                 gui.add(prop, "value", 0, 1, 0.01).name(k);
-        //                 break;
-        //             case "samples":
-        //                 gui.add(prop, "value", 0, 200, 1).name(k);
-        //                 break;
-        //         }
-        //     }
-        // })
+        
         this.gui.add(shaderUniforms.weight, "value", 0, 1, 0.01).name('Weight');
         this.gui.add(shaderUniforms.exposure, "value", 0, 1, 0.01).name("Exposure");
         this.gui.add(shaderUniforms.decay, "value", 0.8, 1, 0.001).name("Decay");

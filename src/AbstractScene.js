@@ -14,13 +14,18 @@ import { Scene } from 'three';
 
  export class AbstractScene {
 
-  constructor(camera, gui,controls) {
+  constructor(camera, gui) {
 
+    this.scene = new THREE.Scene;
     this.loader = new GLTFLoader();
     this.camera = camera
 
     this.gui = gui
-    this.controls = controls
+    this.controls = new OrbitControls(this.camera, renderer.domElement);
+
+    let efffectcomposer = this.composeEffects();
+    this.sceneComposer = efffectcomposer[1];
+    this.occlusionComposer = efffectcomposer[0];
 
 
 
@@ -55,6 +60,10 @@ import { Scene } from 'three';
   }
 
   buildScene(scene){
+    throw new Error("Method must be implemented.");
+  }
+
+  update(){
     throw new Error("Method must be implemented.");
   }
 
