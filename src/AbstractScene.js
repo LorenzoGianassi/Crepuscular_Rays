@@ -8,24 +8,22 @@ import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShade
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { blendingShader, occlusionShader, renderer } from "./index.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GUI } from 'dat.gui';
+
 import dat from 'dat.gui';
 import { Scene } from 'three';
 
- export class AbstractScene {
+export class AbstractScene {
 
-  constructor(camera, gui) {
-
+  constructor() {
+    //this.scene = scene;
+    //this.gui = gui;
+    
     this.scene = new THREE.Scene;
-    this.loader = new GLTFLoader();
-    this.camera = camera
+    //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
+    this.gui = new dat.GUI();
+    //this.controls = new OrbitControls(this.camera, renderer.domElement);
+    
 
-    this.gui = gui
-    this.controls = new OrbitControls(this.camera, renderer.domElement);
-
-    let efffectcomposer = this.composeEffects();
-    this.sceneComposer = efffectcomposer[1];
-    this.occlusionComposer = efffectcomposer[0];
 
 
 
@@ -43,78 +41,84 @@ import { Scene } from 'three';
     }
   }
 
+
   render() {
     throw new Error("Method must be implemented.");
   }
 
-  buildGUI(){
+  buildGUI() {
     throw new Error("Method must be implemented.");
   }
 
-  destroyGUI(){
+  destroyGUI() {
     this.gui.destroy();
   }
 
-  buildLight(scene){
+  updateShaderLightPosition() {
     throw new Error("Method must be implemented.");
   }
 
-  buildScene(scene){
+  buildLight(scene) {
     throw new Error("Method must be implemented.");
   }
 
-  update(){
+  buildScene() {
     throw new Error("Method must be implemented.");
   }
 
-  composeEffects(){
+  update() {
+    throw new Error("Method must be implemented.");
+  }
+
+  composeEffects() {
     // PostProcessing
-  const renderTargetParameters = {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter,
-    format: THREE.RGBFormat,
-    stencilBuffer: false
-  };
+    const renderTargetParameters = {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBFormat,
+      stencilBuffer: false
+    };
 
-  // A preconfigured render target internally used by EffectComposer.
-  let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
+    // A preconfigured render target internally used by EffectComposer.
+    let target = new THREE.WebGLRenderTarget(window.innerWidth / 2, window.innerHeight / 2, renderTargetParameters)
 
-  //OcclusionComposer
-  let occlusionComposer = new EffectComposer(renderer, target);
-  occlusionComposer.addPass(new RenderPass(this.scene, this.camera));
+    //OcclusionComposer
+    let occlusionComposer = new EffectComposer(renderer, target);
+    occlusionComposer.addPass(new RenderPass(this.scene, this.camera));
 
-  //Scattering
-  let scatteringPass = new ShaderPass(occlusionShader);
-  occlusionComposer.addPass(scatteringPass);
+    //Scattering
+    let scatteringPass = new ShaderPass(occlusionShader);
+    this.shaderUniforms = scatteringPass.uniforms
+    occlusionComposer.addPass(scatteringPass);
 
-  //HorizonatlBlur
-  let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
-  horizontalBlurPass.uniforms.h.value = 0.4 / target.height;
-  // occlusionComposer.addPass(horizontalBlurPass);
+    //HorizonatlBlur
+    let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
+    horizontalBlurPass.uniforms.h.value = 0.4 / target.height;
+    // occlusionComposer.addPass(horizontalBlurPass);
 
-  //VerticalBlur
-  let verticalBlurPass = new ShaderPass(VerticalBlurShader);
-  verticalBlurPass.uniforms.v.value = 0.4 / target.width;
-  // occlusionComposer.addPass(verticalBlurPass);
+    //VerticalBlur
+    let verticalBlurPass = new ShaderPass(VerticalBlurShader);
+    verticalBlurPass.uniforms.v.value = 0.4 / target.width;
+    // occlusionComposer.addPass(verticalBlurPass);
 
-  // Copy Shader
-  let finalPass = new ShaderPass(CopyShader);
-  occlusionComposer.addPass(finalPass);
+    // Copy Shader
+    let finalPass = new ShaderPass(CopyShader);
+    occlusionComposer.addPass(finalPass);
 
-  // Scene Composer
-  let sceneComposer = new EffectComposer(renderer);
-  sceneComposer.addPass(new RenderPass(this.scene, this.camera));
+    // Scene Composer
+    let sceneComposer = new EffectComposer(renderer);
+    sceneComposer.addPass(new RenderPass(this.scene, this.camera));
 
-  //Blending Pass
-  let blendingPass = new ShaderPass(blendingShader);
-  blendingPass.uniforms.tOcclusion.value = target.texture;
+    //Blending Pass
+    let blendingPass = new ShaderPass(blendingShader);
+    blendingPass.uniforms.tOcclusion.value = target.texture;
 
-  blendingPass.renderToScreen = true; // Whether the final pass is rendered to the screen (default framebuffer) or not.
-  sceneComposer.addPass(blendingPass);
+    blendingPass.renderToScreen = true; // Whether the final pass is rendered to the screen (default framebuffer) or not.
+    sceneComposer.addPass(blendingPass);
 
-  return [occlusionComposer, sceneComposer]
+
+    return [occlusionComposer, sceneComposer]
   }
-
 }
 
 

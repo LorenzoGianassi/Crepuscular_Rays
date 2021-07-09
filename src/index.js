@@ -50,97 +50,100 @@ const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
 const LOADING_LAYER = 2;
 
-//const axesHelper = new THREE.AxesHelper(10);
+//Loader
+const loader = new GLTFLoader();
 
 
 //Renderer 
 const renderer = new THREE.WebGLRenderer();
+
+
+
+
+/*
 // Camera
-const camera = new THREE.PerspectiveCamera(
+let camera = new THREE.PerspectiveCamera(
     5,                                   // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1,                                  // Near clipping pane
     10000                             // Far clipping pane
 );
+*/
 
-let gui = new dat.GUI();
-let controls = new OrbitControls(camera, renderer.domElement);
-
-
-let firstScene = new FirstScene(camera,gui,controls)
+//let gui = new dat.GUI();
+//let controls = new OrbitControls(camera, renderer.domElement);
 
 
 //Windows scale bug
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.domElement.style.position = "absolute";
-renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
-document.body.appendChild(renderer.domElement);
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.top = "0";
+    renderer.domElement.style.left = "0";
+    document.body.appendChild(renderer.domElement);
+
+
+    
+let firstScene = new FirstScene()
+
 
 //Control Camera
 //const controls = new OrbitControls(camera, renderer.domElement);
 
-//Loader
-const loader = new GLTFLoader();
+
 
 //let scene = new FirstScene();
 
-export { 
-    renderer, 
-    occlusionShader, 
+export {
+    renderer,
+    occlusionShader,
     blendingShader,
     loader,
     OCCLUSION_LAYER,
     DEFAULT_LAYER,
-    updateShaderLightPosition };
+    updateShaderLightPosition
+};
 
-
-function update(){
-    updateShaderLightPosition();
-}
 
 function onFrame() {
-  requestAnimationFrame(onFrame);
-  update();
-  firstScene.render();
+    requestAnimationFrame(onFrame);
+    firstScene.render();
 }
 
 
-function updateShaderLightPosition() {
-    let screenPosition = firstScene.lightSphere.position.clone().project(camera);
+function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
+    let screenPosition = lightSphere.position.clone().project(camera);
     let newX = 0.5 * (screenPosition.x + 1);
     let newY = 0.5 * (screenPosition.y + 1);
     let newZ = 0.5 * (screenPosition.z + 1);
-    let shaderUniforms = firstScene.occlusionComposer.passes[1].uniforms;
     shaderUniforms.lightPosition.value.set(newX, newY, newZ)
 }
 
 
-/*
+
 function setUpSceneSelection() {
     let gui = new dat.GUI();
     gui.domElement.style.float = "left";
     gui.addFolder("Scene selection")
 
     let scenes = {
-        "Skull1": FirstScene,
+        "scene": FirstScene,
     }
 
-    let sceneSelector = gui.add({scene}, "scene", Object.keys(scenes));
+    let sceneSelector = gui.add({firstScene}, "firstScene", Object.keys(scenes));
     sceneSelector.onChange((selectedScene) => {
-        let oldScene = scene;
+        let oldScene = firstScene;
         oldScene.destroyGUI();
         // @ts-ignore
-        scene = new scenes[selectedScene]();
+        firstScene = new scenes[selectedScene]();
 
     })
-    sceneSelector.setValue("Skull1");
+    sceneSelector.setValue("scene");
 }
-*/
 
 
 
-//setUpSceneSelection()
 
+setUpSceneSelection()
 onFrame();
