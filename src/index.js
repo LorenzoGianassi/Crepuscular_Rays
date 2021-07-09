@@ -58,8 +58,6 @@ const loader = new GLTFLoader();
 const renderer = new THREE.WebGLRenderer();
 
 
-
-
 /*
 // Camera
 let camera = new THREE.PerspectiveCamera(
@@ -75,16 +73,15 @@ let camera = new THREE.PerspectiveCamera(
 
 
 //Windows scale bug
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+document.body.appendChild(renderer.domElement);
 
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.domElement.style.position = "absolute";
-    renderer.domElement.style.top = "0";
-    renderer.domElement.style.left = "0";
-    document.body.appendChild(renderer.domElement);
 
 
-    
 let firstScene = new FirstScene()
 
 
@@ -105,9 +102,15 @@ export {
     updateShaderLightPosition
 };
 
+function update(scene) {
+
+    updateShaderLightPosition(scene.lightSphere, scene.camera, scene.shaderUniforms)
+}
+
 
 function onFrame() {
     requestAnimationFrame(onFrame);
+    update(firstScene);
     firstScene.render();
 }
 
@@ -131,7 +134,7 @@ function setUpSceneSelection() {
         "scene": FirstScene,
     }
 
-    let sceneSelector = gui.add({firstScene}, "firstScene", Object.keys(scenes));
+    let sceneSelector = gui.add({ firstScene }, "firstScene", Object.keys(scenes));
     sceneSelector.onChange((selectedScene) => {
         let oldScene = firstScene;
         oldScene.destroyGUI();

@@ -36,9 +36,6 @@ export class AbstractScene {
     this.lightSphere = undefined;
     */
 
-    if (this.constructor == AbstractScene) {
-      throw new Error("Abstract classes can't be instantiated.");
-    }
   }
 
 
@@ -58,17 +55,10 @@ export class AbstractScene {
     throw new Error("Method must be implemented.");
   }
 
-  buildLight(scene) {
-    throw new Error("Method must be implemented.");
-  }
-
   buildScene() {
     throw new Error("Method must be implemented.");
   }
 
-  update() {
-    throw new Error("Method must be implemented.");
-  }
 
   composeEffects() {
     // PostProcessing

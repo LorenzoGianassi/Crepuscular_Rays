@@ -28,7 +28,8 @@ export class FirstScene extends AbstractScene {
 
     constructor() {
         super();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
+        
+        this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
         //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
         // this.scene = new THREE.Scene;
@@ -70,17 +71,6 @@ export class FirstScene extends AbstractScene {
         this.sceneComposer.render();
     }
 
-    buildLight() {
-        //AmbientLight
-        this.scene.add(this.ambientLight);
-        //PointLight
-        this.scene.add(this.pointLight);
-        //SphereGeometry
-        this.lightSphere.add(new THREE.AxesHelper(100));
-        this.lightSphere.layers.set(OCCLUSION_LAYER)
-        this.scene.add(this.lightSphere);
-
-    }
 
 
 
@@ -104,18 +94,19 @@ export class FirstScene extends AbstractScene {
             gltf.scene.position.x = 3;
             gltf.scene.position.y = -0.5;
             gltf.scene.position.z = 5;
-            gltf.scene.visible = true;
+
 
 
         }, function (error) {
             // console.error( error );
         });
-
+        
+        this.scene.add(new AxesHelper(10))
         //AmbientLight
         this.ambientLight = new THREE.AmbientLight("#2c3e50");
         this.scene.add(this.ambientLight);
 
-        
+
         //PointLight
         this.pointLight = new THREE.PointLight("#fffffff");
         this.scene.add(this.pointLight);
@@ -125,6 +116,7 @@ export class FirstScene extends AbstractScene {
         let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
+        this.lightSphere.layers.set(OCCLUSION_LAYER)
 
         this.scene.add(this.lightSphere);
 
