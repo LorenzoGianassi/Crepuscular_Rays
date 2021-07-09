@@ -5,40 +5,20 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
 import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader";
 import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { blendingShader, occlusionShader, renderer } from "./index.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import dat from 'dat.gui';
-import { Scene } from 'three';
 
 export class AbstractScene {
 
   constructor() {
-    //this.scene = scene;
-    //this.gui = gui;
     
     this.scene = new THREE.Scene;
-    //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
     this.gui = new dat.GUI();
-    //this.controls = new OrbitControls(this.camera, renderer.domElement);
-    
-
-
-
-
-    /*
-    this.camera = new THREE.PerspectiveCamera();
-    this.scene = new THREE.Scene();
-    this.gui = new dat.GUI();
-    this.controls = new OrbitControls(this.camera, renderer.domElement);
-    this.pointLight = undefined;
-    this.lightSphere = undefined;
-    */
-
+  
   }
 
-
+//  Abastract Methods
   render() {
     throw new Error("Method must be implemented.");
   }
@@ -59,9 +39,9 @@ export class AbstractScene {
     throw new Error("Method must be implemented.");
   }
 
-
+  // PostProcessing methods using the Shaders
   composeEffects() {
-    // PostProcessing
+
     const renderTargetParameters = {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
@@ -84,12 +64,12 @@ export class AbstractScene {
     //HorizonatlBlur
     let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
     horizontalBlurPass.uniforms.h.value = 0.4 / target.height;
-    // occlusionComposer.addPass(horizontalBlurPass);
+    occlusionComposer.addPass(horizontalBlurPass);
 
     //VerticalBlur
     let verticalBlurPass = new ShaderPass(VerticalBlurShader);
     verticalBlurPass.uniforms.v.value = 0.4 / target.width;
-    // occlusionComposer.addPass(verticalBlurPass);
+    occlusionComposer.addPass(verticalBlurPass);
 
     // Copy Shader
     let finalPass = new ShaderPass(CopyShader);

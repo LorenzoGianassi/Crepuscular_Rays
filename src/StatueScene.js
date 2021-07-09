@@ -13,52 +13,26 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { AbstractScene } from "./AbstractScene";
-import dat from 'dat.gui';
 
-export class FirstScene extends AbstractScene {
-
-    /*
-    camera = new THREE.PerspectiveCamera();
-    scene = new THREE.Scene();
-    gui = new dat.GUI();
-    controls = new OrbitControls(this.camera, renderer.domElement);
-    pointLight = undefined;
-    lightSphere = undefined;
-    */
+export class StatueScene extends AbstractScene {
 
     constructor() {
         super();
         
         this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
-        //this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
-        // this.scene = new THREE.Scene;
 
 
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
-        //let effectComposer = this.composeEffects();
-        //let shaderUniforms = occlusionComposer.passes[1].uniforms;
-        //this.shaderUniforms = this.occlusionComposer.passes[1]
         this.buildScene();
-        //this.occlusionComposer = composeEffect[0]
-        //this.sceneComposer= composeEffect[1]
         this.buildGUI();
-        //this.buildLight(this.scene);
 
     }
 
 
     render() {
-        /*
-        let efffectComposer = this.composeEffects();
-        let occlusionComposer = efffectComposer[0];
-        let sceneComposer = efffectComposer[1];
-        
-        */
-        // updateShaderLightPosition();
-
         this.controls.update();
 
         this.camera.layers.set(OCCLUSION_LAYER);
@@ -98,10 +72,19 @@ export class FirstScene extends AbstractScene {
 
 
         }, function (error) {
-            // console.error( error );
+             console.error( error );
         });
         
         this.scene.add(new AxesHelper(10))
+        
+
+        this.camera.position.z = 200;
+        this.controls.update();
+        this.buildLight(this.scene);
+
+    }
+
+    buildLight(){
         //AmbientLight
         this.ambientLight = new THREE.AmbientLight("#2c3e50");
         this.scene.add(this.ambientLight);
@@ -119,11 +102,6 @@ export class FirstScene extends AbstractScene {
         this.lightSphere.layers.set(OCCLUSION_LAYER)
 
         this.scene.add(this.lightSphere);
-
-
-        this.camera.position.z = 200;
-        this.controls.update();
-        //this.buildLight(this.scene);
 
     }
 

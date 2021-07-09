@@ -6,16 +6,13 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
-import scatteringFragmentShader from "./FragmentVolumetricScattering.glsl"
+import scatteringFragmentShader from "./FragmentScatteringShader.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
-import testfile from "../models/scene.gltf";
 
 import dat from 'dat.gui';
 import * as THREE from 'three';
-import { AbstractScene } from "./AbstractScene";
-
-import { FirstScene } from "./FirstScene";
+import { StatueScene } from "./StatueScene";
 
 
 
@@ -53,23 +50,8 @@ const LOADING_LAYER = 2;
 //Loader
 const loader = new GLTFLoader();
 
-
 //Renderer 
 const renderer = new THREE.WebGLRenderer();
-
-
-/*
-// Camera
-let camera = new THREE.PerspectiveCamera(
-    5,                                   // Field of view
-    window.innerWidth / window.innerHeight, // Aspect ratio
-    0.1,                                  // Near clipping pane
-    10000                             // Far clipping pane
-);
-*/
-
-//let gui = new dat.GUI();
-//let controls = new OrbitControls(camera, renderer.domElement);
 
 
 //Windows scale bug
@@ -82,15 +64,7 @@ document.body.appendChild(renderer.domElement);
 
 
 
-let firstScene = new FirstScene()
-
-
-//Control Camera
-//const controls = new OrbitControls(camera, renderer.domElement);
-
-
-
-//let scene = new FirstScene();
+let scene = new StatueScene()
 
 export {
     renderer,
@@ -110,9 +84,9 @@ function update(scene) {
 
 function onFrame() {
     requestAnimationFrame(onFrame);
-    firstScene.controls.update();
-    update(firstScene);
-    firstScene.render();
+    scene.controls.update();
+    update(scene);
+    scene.render();
 }
 
 
@@ -132,15 +106,14 @@ function setUpSceneSelection() {
     gui.addFolder("Scene selection")
 
     let scenes = {
-        "scene": FirstScene,
+        "scene": StatueScene,
     }
 
-    let sceneSelector = gui.add({ firstScene }, "firstScene", Object.keys(scenes));
+    let sceneSelector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes));
     sceneSelector.onChange((selectedScene) => {
-        let oldScene = firstScene;
+        let oldScene = scene;
         oldScene.destroyGUI();
-        // @ts-ignore
-        firstScene = new scenes[selectedScene]();
+        scene = new scenes[selectedScene]();
 
     })
     sceneSelector.setValue("scene");
