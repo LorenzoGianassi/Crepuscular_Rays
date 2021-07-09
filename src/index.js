@@ -1,7 +1,7 @@
 
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { MapControls, OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
@@ -110,6 +110,7 @@ function update(scene) {
 
 function onFrame() {
     requestAnimationFrame(onFrame);
+    firstScene.controls.update();
     update(firstScene);
     firstScene.render();
 }
