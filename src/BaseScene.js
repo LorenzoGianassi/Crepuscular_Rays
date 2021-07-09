@@ -9,7 +9,7 @@ import { blendingShader, occlusionShader, renderer } from "./index.js";
 
 import dat from 'dat.gui';
 
-export class AbstractScene {
+export class BaseScene {
 
   constructor() {
     
@@ -36,6 +36,10 @@ export class AbstractScene {
   }
 
   buildScene() {
+    throw new Error("Method must be implemented.");
+  }
+
+  update() {
     throw new Error("Method must be implemented.");
   }
 

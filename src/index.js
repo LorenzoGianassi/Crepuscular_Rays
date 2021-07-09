@@ -1,11 +1,7 @@
 
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { MapControls, OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
-import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
+
 import scatteringFragmentShader from "./FragmentScatteringShader.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
@@ -76,16 +72,13 @@ export {
     updateShaderLightPosition
 };
 
-function update(scene) {
 
-    updateShaderLightPosition(scene.lightSphere, scene.camera, scene.shaderUniforms)
-}
 
 
 function onFrame() {
     requestAnimationFrame(onFrame);
     scene.controls.update();
-    update(scene);
+    scene.update();
     scene.render();
 }
 
@@ -106,7 +99,7 @@ function setUpSceneSelection() {
     gui.addFolder("Scene selection")
 
     let scenes = {
-        "scene": StatueScene,
+        "Scene": StatueScene,
     }
 
     let sceneSelector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes));
@@ -116,7 +109,7 @@ function setUpSceneSelection() {
         scene = new scenes[selectedScene]();
 
     })
-    sceneSelector.setValue("scene");
+    sceneSelector.setValue("Scene");
 }
 
 

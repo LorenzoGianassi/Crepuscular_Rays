@@ -9,12 +9,11 @@ import {
     PointLight,
     SphereBufferGeometry
 } from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
-import { AbstractScene } from "./AbstractScene";
+import { BaseScene } from "./BaseScene";
 
-export class StatueScene extends AbstractScene {
+export class StatueScene extends BaseScene {
 
     constructor() {
         super();
@@ -46,6 +45,9 @@ export class StatueScene extends AbstractScene {
     }
 
 
+    update(){
+        updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+    }
 
 
     buildScene() {
