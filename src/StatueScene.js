@@ -1,4 +1,5 @@
 import testfile from "../models/scene.gltf";
+import sky from "../models/textures/galaxy1.png";
 import * as THREE from 'three';
 import {
     AmbientLight,
@@ -7,7 +8,8 @@ import {
     MeshBasicMaterial,
     PerspectiveCamera,
     PointLight,
-    SphereBufferGeometry
+    SphereBufferGeometry,
+    TextureLoader
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
@@ -20,7 +22,6 @@ export class StatueScene extends BaseScene {
         
         this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
-
 
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -35,7 +36,7 @@ export class StatueScene extends BaseScene {
         this.controls.update();
 
         this.camera.layers.set(OCCLUSION_LAYER);
-        renderer.setClearColor("#111111")
+        renderer.setClearColor("#1a1a1a")
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
@@ -74,7 +75,7 @@ export class StatueScene extends BaseScene {
 
 
         }, function (error) {
-             console.error( error );
+            //  console.error( error );
         });
         
         this.scene.add(new AxesHelper(10))
@@ -83,6 +84,7 @@ export class StatueScene extends BaseScene {
         this.camera.position.z = 200;
         this.controls.update();
         this.buildLight(this.scene);
+        this.buildBackGround()
 
     }
 
@@ -105,6 +107,23 @@ export class StatueScene extends BaseScene {
 
         this.scene.add(this.lightSphere);
 
+    }
+
+    buildBackGround(){
+        const textureloader = new THREE.TextureLoader();
+
+
+        const starGeometry = new THREE.SphereBufferGeometry(80, 64, 64);
+        const texture = textureloader.load(sky);
+        const starMaterial = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.BackSide,
+        });
+        // const starMesh = new THREE.Mesh(starGeometry,starMaterial);
+        let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
+        this.scene.add(backgroundSphere);
+
+        backgroundSphere.layers.set(DEFAULT_LAYER);
     }
 
     buildGUI() {
