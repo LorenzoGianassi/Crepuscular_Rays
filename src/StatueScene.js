@@ -26,6 +26,7 @@ export class StatueScene extends BaseScene {
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
+        this.options = {color: "#ffffff"}
         this.buildScene();
         this.buildGUI();
 
@@ -34,6 +35,7 @@ export class StatueScene extends BaseScene {
 
     render() {
         this.controls.update();
+
 
         this.camera.layers.set(OCCLUSION_LAYER);
         renderer.setClearColor("#1a1a1a")
@@ -105,9 +107,12 @@ export class StatueScene extends BaseScene {
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
 
+
         this.scene.add(this.lightSphere);
 
     }
+
+
 
     buildBackGround(){
         const textureloader = new THREE.TextureLoader();
@@ -159,6 +164,12 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.shaderUniforms.decay, "value", 0.8, 1, 0.001).name("Decay");
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
+
+        this.gui.addFolder("Change color");
+        this.gui.addColor(this.options,"color").onFinishChange(()=>{this.lightSphere.material.setValues({
+            color: this.options.color});
+            this.update()
+        });
     }
 }
 
