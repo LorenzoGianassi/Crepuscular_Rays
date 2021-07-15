@@ -9,6 +9,7 @@ import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
+import { StatueScene1 } from './StatueScene1';
 
 
 
@@ -93,27 +94,28 @@ function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
 
 
 
-function setUpSceneSelection() {
+function SelectScene() {
     let gui = new dat.GUI();
     gui.domElement.style.float = "left";
-    gui.addFolder("Scene selection")
+    gui.addFolder("Select Scene")
 
     let scenes = {
-        "Scene": StatueScene,
+        "Scene1": StatueScene,
+        "Scene2": StatueScene1,
     }
 
-    let sceneSelector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes));
-    sceneSelector.onChange((selectedScene) => {
+    let selector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes)).name("Current Scene");
+    selector.onChange((selectedScene) => {
         let oldScene = scene;
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
 
     })
-    sceneSelector.setValue("Scene");
+    selector.setValue("Scene1");
 }
 
 
 
 
-setUpSceneSelection()
+SelectScene();
 onFrame();
