@@ -26,8 +26,11 @@ export class StatueScene extends BaseScene {
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
-        this.options = { color: "#ffffff" }
-        this.angle = 0
+        this.options = { 
+            color: "#ffffff",
+            animate: false,
+        }
+        this.angle = 0;
         this.buildScene();
         this.buildGUI();
 
@@ -51,17 +54,19 @@ export class StatueScene extends BaseScene {
 
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-        this.loop360()
+        this.loop()
     }
 
-    loop360() {
-        var radius = 10,
-            xPos = Math.sin(this.angle) * radius,
-            yPos = Math.cos(this.angle) * radius;
-        this.lightSphere.position.set(xPos, yPos, 0);
-        this.pointLight.position.set(xPos, yPos, 0);
-        this.angle += 0.008
-        updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+    loop() {
+        if (this.options.animate==true){
+            var radius = 10,
+                xPos = Math.sin(this.angle) * radius,
+                yPos = Math.cos(this.angle) * radius;
+            this.lightSphere.position.set(xPos, yPos, 0);
+            this.pointLight.position.set(xPos, yPos, 0);
+            this.angle += 0.008
+            updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+        }
     }
 
 
@@ -183,6 +188,10 @@ export class StatueScene extends BaseScene {
             });
             this.update()
         });
+        // folder of the gUI to enable animation
+        this.gui.addFolder("Scene management");
+        this.gui.add(this.options, "animate").name("Enable Animation");
+
     }
 
 
