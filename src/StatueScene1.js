@@ -1,5 +1,5 @@
-import testfile from "../models/scene.gltf";
-import sky from "../models/textures/sky_texture.jpg";
+import testfile from "../models/statueGLTF/scene.gltf";
+import sky from "../models/backgrounds/sky_texture.jpg";
 import * as THREE from 'three';
 import {
     AmbientLight,
