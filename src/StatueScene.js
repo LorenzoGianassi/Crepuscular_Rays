@@ -19,14 +19,15 @@ export class StatueScene extends BaseScene {
 
     constructor() {
         super();
-        
+
         this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
 
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
-        this.options = {color: "#ffffff"}
+        this.options = { color: "#ffffff" }
+        this.angle = 0
         this.buildScene();
         this.buildGUI();
 
@@ -48,7 +49,18 @@ export class StatueScene extends BaseScene {
     }
 
 
-    update(){
+    update() {
+        updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+        this.loop360()
+    }
+
+    loop360() {
+        var radius = 10,
+            xPos = Math.sin(this.angle) * radius,
+            yPos = Math.cos(this.angle) * radius;
+        this.lightSphere.position.set(xPos, yPos, 0);
+        this.pointLight.position.set(xPos, yPos, 0);
+        this.angle += 0.008
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
     }
 
@@ -79,18 +91,17 @@ export class StatueScene extends BaseScene {
         }, function (error) {
             //  console.error( error );
         });
-        
+
         this.scene.add(new AxesHelper(10))
-        
+
 
         this.camera.position.z = 200;
         this.controls.update();
         this.buildLight(this.scene);
         this.buildBackGround()
-
     }
 
-    buildLight(){
+    buildLight() {
         //AmbientLight
         this.ambientLight = new THREE.AmbientLight("#2c3e50");
         this.scene.add(this.ambientLight);
@@ -99,7 +110,7 @@ export class StatueScene extends BaseScene {
         //PointLight
         this.pointLight = new THREE.PointLight("#fffffff");
         this.scene.add(this.pointLight);
-        
+
 
 
         let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
@@ -114,7 +125,7 @@ export class StatueScene extends BaseScene {
 
 
 
-    buildBackGround(){
+    buildBackGround() {
         const textureloader = new THREE.TextureLoader();
 
 
@@ -166,11 +177,19 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
         this.gui.addFolder("Change color");
-        this.gui.addColor(this.options,"color").onFinishChange(()=>{this.lightSphere.material.setValues({
-            color: this.options.color});
+        this.gui.addColor(this.options, "color").onFinishChange(() => {
+            this.lightSphere.material.setValues({
+                color: this.options.color
+            });
             this.update()
         });
     }
+
+
+
+
+
+
 }
 
 
