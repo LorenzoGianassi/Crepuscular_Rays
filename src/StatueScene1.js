@@ -21,10 +21,8 @@ export class StatueScene1 extends BaseScene {
     constructor() {
         super();
         
-        this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 30, 10000)
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 5, 1000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
-    
-        this.cameraInitialPosition = new Vector3(-14, 0, -20)
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -50,8 +48,7 @@ export class StatueScene1 extends BaseScene {
 
     update(){
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-      
-        console.log(this.camera.position);
+
     }
 
 
@@ -62,6 +59,7 @@ export class StatueScene1 extends BaseScene {
                     let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                     let occlusionObject = new THREE.Mesh(obj.geometry, material)
                     //obj.add(axesHelper);
+
                     occlusionObject.rotation.x =100;
                     occlusionObject.add(new THREE.AxesHelper(100));
                     occlusionObject.layers.set(OCCLUSION_LAYER)
@@ -74,9 +72,9 @@ export class StatueScene1 extends BaseScene {
             this.gui.addFolder("Scene Position");
             this.scene.add(gltf.scene);
             
-            gltf.scene.position.x = -426;
-            gltf.scene.position.y = -78;
-            gltf.scene.position.z = 246;
+            gltf.scene.position.x = -0;
+            gltf.scene.position.y = -0;
+            gltf.scene.position.z = 0;
             
 /*
             let posX = this.gui.add(gltf.scene.position, "x", -1000, 1000, 1);
@@ -118,8 +116,8 @@ export class StatueScene1 extends BaseScene {
 
     buildLight(){
         //AmbientLight
-        this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight);
+       // this.ambientLight = new THREE.AmbientLight("#2c3e50");
+        //this.scene.add(this.ambientLight);
 
 
         //PointLight
@@ -128,7 +126,7 @@ export class StatueScene1 extends BaseScene {
         
 
 
-        let geometry = new THREE.SphereBufferGeometry(80, 320, 320);
+        let geometry = new THREE.SphereBufferGeometry(4, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
