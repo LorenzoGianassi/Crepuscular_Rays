@@ -1,4 +1,6 @@
 import testfile from "../models/statueGLTF/scene.gltf";
+// import testfile from "../models/helicopterGLTF/scene.gltf";
+
 import sky from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
 import {
@@ -54,10 +56,10 @@ export class StatueScene extends BaseScene {
 
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-        this.loop()
+        this.loopSun()
     }
 
-    loop() {
+    loopSun() {
         if (this.options.animate==true){
             var radius = 10,
                 xPos = Math.sin(this.angle) * radius,

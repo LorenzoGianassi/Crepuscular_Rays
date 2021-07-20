@@ -112,7 +112,7 @@ function SelectScene() {
         loop(scene.lightSphere, scene.camera, scene.shaderUniforms)
 
     })
-    selector.setValue("Scene1");
+    selector.setValue("Scene2");
 }
 
 
