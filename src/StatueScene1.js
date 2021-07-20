@@ -7,6 +7,8 @@ import {
     AmbientLight,
     AxesHelper,
     Clock,
+    Group,
+    LoopRepeat,
     Mesh,
     MeshBasicMaterial,
     PerspectiveCamera,
@@ -25,17 +27,21 @@ export class StatueScene1 extends BaseScene {
 
         this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
-
+        this.icosahedronGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
-        this.options = { 
+        this.options = {
             color: "#ffffff",
             animate: false,
         }
+        this.clock = new THREE.Clock();
         this.angle = 0;
         this.buildScene();
-        this.buildGUI();
+        this.mixer = new THREE.AnimationMixer();
+        //this.buildGUI();
+
+
 
     }
 
@@ -56,75 +62,97 @@ export class StatueScene1 extends BaseScene {
 
 
     update() {
-        updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-        this.loopSun()
+        //    updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+
+        var delta = this.clock.getDelta()
+        this.mixer.update(delta)
         this.flyPlane()
-        // this.animateMesh();
-        // this.gltf.animations
+
     }
-    
 
 
-    animateMesh(){
-        const mixer = new THREE.AnimationMixer(this.gltf)
-        const clips = this.gltf.animations;
-        mixer.update(90);
-        clips.forEach(clip => {
-            mixer.clipAction(clip).play();
-        });
+    radians_to_degrees(radians)
+    {
+      var pi = Math.PI;
+      return radians * (180/pi);
     }
 
     loopSun() {
-        if (this.options.animate==true){
+        if (this.options.animate == true) {
             var radius = 10,
                 xPos = Math.sin(this.angle) * radius,
                 yPos = Math.cos(this.angle) * radius;
             this.lightSphere.position.set(xPos, yPos, 0);
             this.pointLight.position.set(xPos, yPos, 0);
+
             this.angle += 0.008
             updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         }
     }
 
-    flyPlane(){
+
+    flyPlane() {180
+        this.angle += 0.002
         var radius = 10,
-                xPos = Math.sin(this.angle) * radius,
-                zPos = Math.cos(this.angle) * radius;
-        this.gltf.scene.position.set(xPos, 0, zPos);
-        this.angle += 0.008
+            xPos = Math.sin(this.angle) * radius,
+            zPos = Math.cos(this.angle) * radius;
+        var yPos = Math.cos(this.angle) * radius
+
+        console.log(yPos)
+        this.icosahedronGroupScene.position.set(xPos, 0, zPos);
+        //this.icosahedronGroupScene.rotation.set(0, this.angle ,0);
+        this.icosahedronGroupScene.rotation.set(0,-yPos,0)
 
     }
 
-
-    buildScene() {
-        loader.load(testfile, gltf => {
-            gltf.scene.traverse(function (obj) {
-                if (obj.isMesh) {
-                    let material = new THREE.MeshBasicMaterial({ color: "#000000" });
-                    let occlusionObject = new THREE.Mesh(obj.geometry, material);
-                    //obj.add(axesHelper);
-                    occlusionObject.add(new THREE.AxesHelper(100));
-                    occlusionObject.layers.set(OCCLUSION_LAYER)
-                    if (obj.parent != null) {
-                        obj.parent.add(occlusionObject)
-                    }
-
-
-                }
-            })
-
-            this.gltf = gltf;
-            this.scene.add(gltf.scene);
-            gltf.scene.position.x = 3;
-            gltf.scene.position.y = -0.5;
-            gltf.scene.position.z = 5;
-            // this.animateMesh(gltf.scene);
-
-
-
-        }, function (error) {
-            //  console.error( error );
+    animateMesh(gltf) {
+        this.mixer = new THREE.AnimationMixer(gltf.scene);
+        gltf.animations.forEach((clip) => {
+            this.mixer.clipAction(clip).play();
         });
+    }
+
+
+    loadModel(path, onProgress = () => {
+    }) {
+        return new Promise(((resolve, reject) => {
+            loader.load(path, gltf => {
+                this.animateMesh(gltf)
+                resolve(gltf);
+            },
+                onProgress,
+                error => {
+                    reject(error);
+                });
+        }))
+    }
+
+
+    async buildScene() {
+        this.icosahedronGroupScene = (await this.loadModel(testfile)).scene
+        this.icosahedronGroupScene.traverse(function (obj) {
+            if (obj.isMesh) {
+                let material = new THREE.MeshBasicMaterial({ color: "#000000" });
+                let occlusionObject = new THREE.Mesh(obj.geometry, material);
+                //obj.add(axesHelper);
+                occlusionObject.add(new THREE.AxesHelper(100));
+                occlusionObject.layers.set(OCCLUSION_LAYER)
+                if (obj.parent != null) {
+                    obj.parent.add(occlusionObject)
+                }
+
+
+            }
+        })
+        this.scene.add(this.icosahedronGroupScene);
+
+
+
+
+
+
+
+
 
         this.scene.add(new AxesHelper(10))
 
@@ -132,6 +160,9 @@ export class StatueScene1 extends BaseScene {
         this.controls.update();
         this.buildLight(this.scene);
         this.buildBackGround()
+
+
+        return Promise.resolve(this)
     }
 
     buildLight() {
