@@ -1,5 +1,5 @@
 
-import planeFile from "../models/helicopterGLTF/scene.gltf";
+import planeFile from "../models/planeGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';

@@ -1,5 +1,4 @@
 import testfile from "../models/statueGLTF/scene.gltf";
-// import testfile from "../models/helicopterGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
