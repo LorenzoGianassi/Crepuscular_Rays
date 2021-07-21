@@ -38,8 +38,9 @@ export class StatueScene1 extends BaseScene {
         this.clock = new THREE.Clock();
         this.angle = 0;
         this.buildScene();
+        this.buildLight();
         this.mixer = new THREE.AnimationMixer();
-        // this.buildGUI();
+        this.buildGUI();
 
 
 
@@ -93,7 +94,6 @@ export class StatueScene1 extends BaseScene {
 
         console.log(yPos)
         this.planeGroupScene.position.set(xPos, 0, zPos);
-        //this.icosahedronGroupScene.rotation.set(0, this.angle ,0);
         this.planeGroupScene.rotation.set(0,-yPos,0)
 
     }
@@ -145,7 +145,7 @@ export class StatueScene1 extends BaseScene {
 
         this.camera.position.z = 200;
         this.controls.update();
-        this.buildLight(this.scene);
+        // this.buildLight();
         this.buildBackGround()
 
 

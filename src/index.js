@@ -9,7 +9,7 @@ import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
-import { StatueScene1 } from './StatueScene1';
+import { StatueScene1 } from './PlaneScene';
 
 
 
