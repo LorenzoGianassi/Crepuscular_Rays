@@ -1,5 +1,5 @@
-// import testfile from "../models/statueGLTF/scene.gltf";
-import testfile from "../models/helicopterGLTF/scene.gltf";
+
+import planeFile from "../models/helicopterGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
@@ -27,7 +27,7 @@ export class StatueScene1 extends BaseScene {
 
         this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
-        this.icosahedronGroupScene = new THREE.Group
+        this.planeGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -39,7 +39,7 @@ export class StatueScene1 extends BaseScene {
         this.angle = 0;
         this.buildScene();
         this.mixer = new THREE.AnimationMixer();
-        //this.buildGUI();
+        // this.buildGUI();
 
 
 
@@ -62,20 +62,13 @@ export class StatueScene1 extends BaseScene {
 
 
     update() {
-        //    updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-
+        updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         var delta = this.clock.getDelta()
         this.mixer.update(delta)
-        this.flyPlane()
+        //  this.flyPlane()
 
     }
 
-
-    radians_to_degrees(radians)
-    {
-      var pi = Math.PI;
-      return radians * (180/pi);
-    }
 
     loopSun() {
         if (this.options.animate == true) {
@@ -99,9 +92,9 @@ export class StatueScene1 extends BaseScene {
         var yPos = Math.cos(this.angle) * radius
 
         console.log(yPos)
-        this.icosahedronGroupScene.position.set(xPos, 0, zPos);
+        this.planeGroupScene.position.set(xPos, 0, zPos);
         //this.icosahedronGroupScene.rotation.set(0, this.angle ,0);
-        this.icosahedronGroupScene.rotation.set(0,-yPos,0)
+        this.planeGroupScene.rotation.set(0,-yPos,0)
 
     }
 
@@ -113,10 +106,10 @@ export class StatueScene1 extends BaseScene {
     }
 
 
-    loadModel(path, onProgress = () => {
+    asyncLoad (filepath, onProgress = () => {
     }) {
         return new Promise(((resolve, reject) => {
-            loader.load(path, gltf => {
+            loader.load(filepath, gltf => {
                 this.animateMesh(gltf)
                 resolve(gltf);
             },
@@ -129,8 +122,8 @@ export class StatueScene1 extends BaseScene {
 
 
     async buildScene() {
-        this.icosahedronGroupScene = (await this.loadModel(testfile)).scene
-        this.icosahedronGroupScene.traverse(function (obj) {
+        this.planeGroupScene = (await this.asyncLoad(planeFile)).scene
+        this.planeGroupScene.traverse(function (obj) {
             if (obj.isMesh) {
                 let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                 let occlusionObject = new THREE.Mesh(obj.geometry, material);
@@ -144,16 +137,10 @@ export class StatueScene1 extends BaseScene {
 
             }
         })
-        this.scene.add(this.icosahedronGroupScene);
-
-
-
-
-
-
-
-
-
+        this.scene.add(this.planeGroupScene);
+        this.planeGroupScene.position.x = 3;
+        this.planeGroupScene.position.y = -0.5;
+        this.planeGroupScene.position.z = 5;
         this.scene.add(new AxesHelper(10))
 
         this.camera.position.z = 200;
@@ -191,8 +178,6 @@ export class StatueScene1 extends BaseScene {
 
     buildBackGround() {
         const textureloader = new THREE.TextureLoader();
-
-
         const starGeometry = new THREE.SphereBufferGeometry(80, 64, 64);
         const texture = textureloader.load(sky);
         const starMaterial = new THREE.MeshBasicMaterial({
