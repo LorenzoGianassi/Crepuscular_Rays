@@ -19,7 +19,6 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, occlusionShader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
-
 export class PlaneScene extends BaseScene {
 
     constructor() {
@@ -41,8 +40,6 @@ export class PlaneScene extends BaseScene {
         this.buildLight();
         this.mixer = new THREE.AnimationMixer();
         this.buildGUI();
-
-
 
     }
 
@@ -145,7 +142,6 @@ export class PlaneScene extends BaseScene {
 
         this.camera.position.z = 200;
         this.controls.update();
-        // this.buildLight();
         this.buildBackGround()
 
 
