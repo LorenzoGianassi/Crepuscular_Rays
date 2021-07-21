@@ -82,7 +82,8 @@ export class PlaneScene extends BaseScene {
     }
 
 
-    flyPlane() {180
+    flyPlane() {
+        if (this.options.animate == true){
         this.angle += 0.002
         var radius = 10,
             xPos = Math.sin(this.angle) * radius,
@@ -92,6 +93,7 @@ export class PlaneScene extends BaseScene {
         console.log(yPos)
         this.planeGroupScene.position.set(xPos, 0, zPos);
         this.planeGroupScene.rotation.set(0,-yPos,0)
+        }
 
     }
 
@@ -230,7 +232,7 @@ export class PlaneScene extends BaseScene {
         });
         // folder of the gUI to enable animation
         this.gui.addFolder("Scene management");
-        this.gui.add(this.options, "animate").name("Enable Animation");
+        this.gui.add(this.options, "animate").name("Enable Plane Movement");
 
     }
 

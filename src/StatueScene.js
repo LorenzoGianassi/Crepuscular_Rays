@@ -191,7 +191,7 @@ export class StatueScene extends BaseScene {
         });
         // folder of the gUI to enable animation
         this.gui.addFolder("Scene management");
-        this.gui.add(this.options, "animate").name("Enable Animation");
+        this.gui.add(this.options, "animate").name("Enable Sun Animation");
 
     }
 
