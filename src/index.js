@@ -8,6 +8,8 @@ import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
+import { StatueScene1 } from './StatueScene1';
+import { StatueScene2 } from './StatueScene2';
 
 
 
@@ -92,27 +94,71 @@ function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
 
 
 
-function setUpSceneSelection() {
+function SelectScene() {
     let gui = new dat.GUI();
     gui.domElement.style.float = "left";
-    gui.addFolder("Scene selection")
+    gui.addFolder("Select Scene")
 
     let scenes = {
-        "Scene": StatueScene,
+        "Scene1": StatueScene,
+        "Scene2": StatueScene1,
+        "Scene3": StatueScene2,
     }
 
-    let sceneSelector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes));
-    sceneSelector.onChange((selectedScene) => {
+    let selector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes)).name("Current Scene");
+    selector.onChange((selectedScene) => {
         let oldScene = scene;
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
+        loop(scene.lightSphere, scene.camera, scene.shaderUniforms)
 
     })
-    sceneSelector.setValue("Scene");
+    selector.setValue("Scene2");
 }
 
 
+let loop = function(lightSphere, camera){
+        
+    requestAnimationFrame(loop);
+    var frame = 0,
+    maxFrame = 360,
+    lt = new Date(),
+    fps = 60,
+    per,
+    bias,
+    r = Math.PI * 2 * per,
+    sin = Math.sin(r) * 30,
+    cos = Math.cos(r) * 30,
+    now = new Date(),
+    secs = (now - lt) / 1000;
+ 
+    per = frame / maxFrame;
+    bias = 1 - Math.abs(0.5 - per) / 0.5;
+ 
+    if (secs > 1 / fps) {
+ 
+        // update point lights
+        pointLight.position.x = 30 * bias;
+        lightSphere.position.x = 30 * bias;
+
+        pointLight.position.z = 30 * bias;
+        lightSphere.position.z = 30 * bias;
 
 
-setUpSceneSelection()
+
+
+        // render
+        lt = new Date();
+ 
+        // step frame
+        frame += fps * secs;
+        frame %= maxFrame;
+
+        updateShaderLightPosition(lightSphere,camera, shaderUniforms)
+
+    }
+
+}
+
+SelectScene();
 onFrame();

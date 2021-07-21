@@ -35,6 +35,8 @@ export class BaseScene {
     throw new Error("Method must be implemented.");
   }
 
+
+
   buildScene() {
     throw new Error("Method must be implemented.");
   }
