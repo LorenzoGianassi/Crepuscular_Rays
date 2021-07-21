@@ -34,8 +34,12 @@ export class PlaneScene extends BaseScene {
             color: "#ffffff",
             animate: false,
         }
-        this.clock = new THREE.Clock();
+        this.clock = new Clock()
         this.angle = 0;
+        this.r = 20;
+        this.theta = 0;
+        this.dTheta = 2 * Math.PI / 1000;
+
         this.buildScene();
         this.buildLight();
         this.mixer = new THREE.AnimationMixer();
@@ -63,7 +67,7 @@ export class PlaneScene extends BaseScene {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         var delta = this.clock.getDelta()
         this.mixer.update(delta)
-        //  this.flyPlane()
+        this.flyPlane()
 
     }
 
@@ -82,17 +86,56 @@ export class PlaneScene extends BaseScene {
     }
 
 
-    flyPlane() {
-        if (this.options.animate == true){
-        this.angle += 0.002
-        var radius = 10,
-            xPos = Math.sin(this.angle) * radius,
-            zPos = Math.cos(this.angle) * radius;
-        var yPos = Math.cos(this.angle) * radius
 
-        console.log(yPos)
-        this.planeGroupScene.position.set(xPos, 0, zPos);
-        this.planeGroupScene.rotation.set(0,-yPos,0)
+
+
+    flyPlane() {
+        if (this.options.animate == false) {
+            if (this.planeGroupScene.position.x >= 19 && this.planeGroupScene.position.x <=20){
+            
+                this.planeGroupScene.rotation.y = -20
+                this.theta += this.dTheta;
+                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
+                console.log(this.r * Math.cos(this.theta))
+                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
+            } else {
+                this.planeGroupScene.rotation.y = 20
+                this.theta += this.dTheta;
+                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
+                console.log(this.r * Math.cos(this.theta))
+                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
+            }
+            if (this.planeGroupScene.position.x >= -19 && this.planeGroupScene.position.x <= -20){
+                this.planeGroupScene.rotation.y = -20
+                this.theta += this.dTheta;
+                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
+                console.log(this.r * Math.cos(this.theta))
+                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
+            } else {
+                this.planeGroupScene.rotation.y = 20
+                this.theta += this.dTheta;
+                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
+                console.log(this.r * Math.cos(this.theta))
+                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
+            }
+
+
+           
+        
+
+
+
+            /*
+                        this.angle += 0.002
+            
+                        var radius = 7,
+                            xPos = Math.sin(this.angle) * radius,
+                            zPos = Math.cos(this.angle) * radius;
+                        var yPos = Math.cos(this.angle) * radius
+            
+                        this.planeGroupScene.position.set(xPos, 0, zPos);
+                        this.planeGroupScene.rotation.set(0, -yPos, 0)
+                        */
         }
 
     }
@@ -105,7 +148,7 @@ export class PlaneScene extends BaseScene {
     }
 
 
-    asyncLoad (filepath, onProgress = () => {
+    asyncLoad(filepath, onProgress = () => {
     }) {
         return new Promise(((resolve, reject) => {
             loader.load(filepath, gltf => {
@@ -162,10 +205,11 @@ export class PlaneScene extends BaseScene {
 
 
 
-        let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
+        let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
+        this.lightSphere.position.y = 6
 
 
         this.scene.add(this.lightSphere);
