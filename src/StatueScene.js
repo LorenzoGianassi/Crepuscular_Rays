@@ -1,4 +1,4 @@
-import testfile from "../models/statueGLTF/scene.gltf";
+import statueFile from "../models/statueGLTF/scene.gltf";
 // import testfile from "../models/helicopterGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/galaxy.png";
@@ -68,12 +68,13 @@ export class StatueScene extends BaseScene {
             this.pointLight.position.set(xPos, yPos, 0);
             this.angle += 0.008
             updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+            
         }
     }
 
 
     buildScene() {
-        loader.load(testfile, gltf => {
+        loader.load(statueFile, gltf => {
             gltf.scene.traverse(function (obj) {
                 if (obj.isMesh) {
                     let material = new THREE.MeshBasicMaterial({ color: "#000000" });
