@@ -20,7 +20,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, occlusionShader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 
-export class StatueScene1 extends BaseScene {
+export class PlaneScene extends BaseScene {
 
     constructor() {
         super();
