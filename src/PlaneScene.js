@@ -1,7 +1,7 @@
 
 import planeFile from "../models/planeGLTF/scene.gltf";
 
-import sky from "../models/backgrounds/galaxy.png";
+import sky from "../models/backgrounds/cloud_texture.jpg";
 import * as THREE from 'three';
 import {
     AmbientLight,
@@ -15,9 +15,9 @@ import {
     PointLight,
     SphereBufferGeometry,
     TextureLoader
-} from "three";
+} from "three"; 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { DEFAULT_LAYER, loader, occlusionShader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
+import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 export class PlaneScene extends BaseScene {
 
