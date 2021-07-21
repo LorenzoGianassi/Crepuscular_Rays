@@ -9,7 +9,8 @@ import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
-import { StatueScene1 } from './PlaneScene';
+import { StatueScene1 } from './StatueScene1';
+import { StatueScene2 } from './StatueScene2';
 
 
 
@@ -102,6 +103,7 @@ function SelectScene() {
     let scenes = {
         "Scene1": StatueScene,
         "Scene2": StatueScene1,
+        "Scene3": StatueScene2,
     }
 
     let selector = gui.add({ StatueScene }, "StatueScene", Object.keys(scenes)).name("Current Scene");
