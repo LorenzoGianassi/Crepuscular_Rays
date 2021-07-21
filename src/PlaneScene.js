@@ -33,6 +33,7 @@ export class PlaneScene extends BaseScene {
         this.options = {
             color: "#ffffff",
             animate: false,
+            animation_speed: 1,
         }
         this.clock = new THREE.Clock();
         this.angle = 0;
@@ -62,8 +63,8 @@ export class PlaneScene extends BaseScene {
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         var delta = this.clock.getDelta()
-        this.mixer.update(delta)
-        //  this.flyPlane()
+        this.mixer.update(delta*this.options.animation_speed)
+        this.flyPlane()
 
     }
 
@@ -231,8 +232,10 @@ export class PlaneScene extends BaseScene {
             this.update()
         });
         // folder of the gUI to enable animation
-        this.gui.addFolder("Scene management");
-        this.gui.add(this.options, "animate").name("Enable Plane Movement");
+        this.gui.addFolder("Flying Management");
+        this.gui.add(this.options, "animate").name("Enable Fly");
+        this.gui.addFolder("Speed of the animations",);
+        this.gui.add(this.options, "animation_speed", 0, 2, 0.01).name("Speed");
 
     }
 
