@@ -10,6 +10,7 @@ import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
 import { PlaneScene } from './PlaneScene';
 import { AbstractSphereScene } from './AbastractSphereScene';
+import { cityFile, CityScene } from './CityScene';
 
 
 // Shaders
@@ -102,6 +103,7 @@ function SelectScene() {
         "StatueScene": StatueScene,
         "PlaneScene": PlaneScene,
         "SphereScene": AbstractSphereScene, 
+        "CityScene": CityScene, 
       
     }
 
@@ -111,7 +113,7 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("SphereScene");
+    selector.setValue("CityScene");
 }
 
 SelectScene();

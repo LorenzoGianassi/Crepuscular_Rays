@@ -1,20 +1,5 @@
-import planeFile from "../models/abstractSphereGLTF/scene.gltf";
-
-import sky from "../models/backgrounds/cloud_texture.jpg";
+import sphereFile from "../models/abstractSphereGLTF/scene.gltf";
 import * as THREE from 'three';
-import {
-    AmbientLight,
-    AxesHelper,
-    Clock,
-    Group,
-    LoopRepeat,
-    Mesh,
-    MeshBasicMaterial,
-    PerspectiveCamera,
-    PointLight,
-    SphereBufferGeometry,
-    TextureLoader
-} from "three"; 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
@@ -95,7 +80,7 @@ export class AbstractSphereScene extends BaseScene {
 
 
     async buildScene() {
-        this.AbstractSphereScene = (await this.asyncLoad(planeFile)).scene
+        this.AbstractSphereScene = (await this.asyncLoad(sphereFile)).scene
         this.AbstractSphereScene.traverse(function (obj) {
             if (obj.isMesh) {
                 let material = new THREE.MeshBasicMaterial({ color: "#000000" });
@@ -109,7 +94,7 @@ export class AbstractSphereScene extends BaseScene {
             }
         })
         this.scene.add(this.AbstractSphereScene);
-        this.AbstractSphereScene.position.z = 5;
+        this.AbstractSphereScene.position.z = 6;
 
         this.camera.position.z = 200;
         this.controls.update();
