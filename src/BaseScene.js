@@ -67,16 +67,17 @@ export class BaseScene {
     this.shaderUniforms = scatteringPass.uniforms
     occlusionComposer.addPass(scatteringPass);
 
+    
     //HorizonatlBlur
     let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
     horizontalBlurPass.uniforms.h.value = 0.4 / target.height;
-    occlusionComposer.addPass(horizontalBlurPass);
+    //occlusionComposer.addPass(horizontalBlurPass);
 
     //VerticalBlur
     let verticalBlurPass = new ShaderPass(VerticalBlurShader);
     verticalBlurPass.uniforms.v.value = 0.4 / target.width;
     occlusionComposer.addPass(verticalBlurPass);
-
+   
     // Copy Shader
     let finalPass = new ShaderPass(CopyShader);
     occlusionComposer.addPass(finalPass);

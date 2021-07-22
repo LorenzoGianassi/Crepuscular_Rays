@@ -15,7 +15,7 @@ import {
     PointLight,
     SphereBufferGeometry,
     TextureLoader
-} from "three"; 
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
@@ -37,9 +37,17 @@ export class PlaneScene extends BaseScene {
         }
         this.clock = new Clock()
         this.angle = 0;
-        this.r = 20;
-        this.theta = 0;
-        this.dTheta = 2 * Math.PI / 1000;
+        this.up = new THREE.Vector3(0, 0, -1);
+        this.axis = new THREE.Vector3();
+        this.spline = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-100, 20, 100),
+            new THREE.Vector3(-40, 20, 20),
+            new THREE.Vector3(70, 20, 10),
+            new THREE.Vector3(100, 20, 30),
+            new THREE.Vector3(-100, 20, 100)]);
+        this.splinePoint = this.spline.getPoints(50)
+        this.pos = 0;
+        this.pointsPath = this.createPath()
 
         this.buildScene();
         this.buildLight();
@@ -67,10 +75,11 @@ export class PlaneScene extends BaseScene {
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         var delta = this.clock.getDelta()
-        this.mixer.update(delta*this.options.animation_speed)
+        this.mixer.update(delta * this.options.animation_speed)
         this.flyPlane()
 
     }
+
 
 
     loopSun() {
@@ -86,57 +95,61 @@ export class PlaneScene extends BaseScene {
         }
     }
 
+    positionLight() {
+        let light = this.scene.getObjectByName('pointLight');
+        if (pos <= 1) {
+            light.position = spline.getPointAt(pos);
+            pos += 0.001
+        } else {
+            pos = 0;
+        }
+    }
+
+    createPath() {
+
+        const pointsPath = new THREE.CurvePath();
+
+        const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-15, 0, 3), 
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(15, 0, 3),
+            new THREE.Vector3(0, 0, 6),
+        ],true);
+
+        var points = curve.getPoints(50);
+        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+        // Create the final object to add to the scene
+        var curveObject = new THREE.Line(geometry, material);
+        this.scene.add(curveObject)
 
 
+
+        pointsPath.add(curve);
+        return pointsPath;
+    }
 
 
     flyPlane() {
-        if (this.options.animate == false) {
-            if (this.planeGroupScene.position.x >= 19 && this.planeGroupScene.position.x <=20){
-            
-                this.planeGroupScene.rotation.y = -20
-                this.theta += this.dTheta;
-                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
-                console.log(this.r * Math.cos(this.theta))
-                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
-            } else {
-                this.planeGroupScene.rotation.y = 20
-                this.theta += this.dTheta;
-                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
-                console.log(this.r * Math.cos(this.theta))
-                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
-            }
-            if (this.planeGroupScene.position.x >= -19 && this.planeGroupScene.position.x <= -20){
-                this.planeGroupScene.rotation.y = -20
-                this.theta += this.dTheta;
-                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
-                console.log(this.r * Math.cos(this.theta))
-                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
-            } else {
-                this.planeGroupScene.rotation.y = 20
-                this.theta += this.dTheta;
-                this.planeGroupScene.position.x = this.r * Math.cos(this.theta);
-                console.log(this.r * Math.cos(this.theta))
-                this.planeGroupScene.position.z = 1 * Math.sin(this.theta);
+        if (this.options.animate == true) {
+
+            const newPosition = this.pointsPath.getPoint(this.pos);
+            const tangent = this.pointsPath.getTangent(this.pos);
+            this.planeGroupScene.position.copy(newPosition);
+            this.axis.crossVectors(this.up, tangent).normalize();
+            const radians = Math.acos(this.up.dot(tangent));
+            this.planeGroupScene.quaternion.setFromAxisAngle(this.axis, radians);
+
+            renderer.render(this.scene, this.camera);
+            this.pos += 0.0005;
+            if (this.pos > 1) {
+                this.pos = 0;
             }
 
+     
 
-           
-        
-
-
-
-            /*
-                        this.angle += 0.002
-            
-                        var radius = 7,
-                            xPos = Math.sin(this.angle) * radius,
-                            zPos = Math.cos(this.angle) * radius;
-                        var yPos = Math.cos(this.angle) * radius
-            
-                        this.planeGroupScene.position.set(xPos, 0, zPos);
-                        this.planeGroupScene.rotation.set(0, -yPos, 0)
-                        */
         }
 
     }
@@ -181,9 +194,9 @@ export class PlaneScene extends BaseScene {
             }
         })
         this.scene.add(this.planeGroupScene);
-        this.planeGroupScene.position.x = 3;
-        this.planeGroupScene.position.y = -0.5;
-        this.planeGroupScene.position.z = 5;
+        this.planeGroupScene.position.x = -15;
+        this.planeGroupScene.position.y = 0;
+        this.planeGroupScene.position.z = 3;
         this.scene.add(new AxesHelper(10))
 
         this.camera.position.z = 200;
