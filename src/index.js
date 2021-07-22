@@ -9,6 +9,7 @@ import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
 import { PlaneScene } from './PlaneScene';
+import { AbstractSphereScene } from './AbastractSphereScene';
 
 
 // Shaders
@@ -100,6 +101,7 @@ function SelectScene() {
     let scenes = {
         "StatueScene": StatueScene,
         "PlaneScene": PlaneScene,
+        "SphereScene": AbstractSphereScene, 
       
     }
 
@@ -109,7 +111,7 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("PlaneScene");
+    selector.setValue("SphereScene");
 }
 
 SelectScene();

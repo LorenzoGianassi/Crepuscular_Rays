@@ -64,8 +64,9 @@ export class BaseScene {
 
     //Scattering
     let scatteringPass = new ShaderPass(occlusionShader);
-    this.shaderUniforms = scatteringPass.uniforms
+    this.shaderUniforms = scatteringPass.uniforms;
     occlusionComposer.addPass(scatteringPass);
+
 
     //HorizonatlBlur
     let horizontalBlurPass = new ShaderPass(HorizontalBlurShader);
