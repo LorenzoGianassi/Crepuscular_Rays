@@ -103,7 +103,7 @@ export class StatueScene extends BaseScene {
 
         this.camera.position.z = 200;
         this.controls.update();
-        this.buildLight(this.scene);
+        this.buildLight();
         this.buildBackGround()
     }
 
@@ -192,14 +192,9 @@ export class StatueScene extends BaseScene {
         // folder of the gUI to enable animation
         this.gui.addFolder("Sun movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
+        
 
     }
-
-
-
-
-
-
 }
 
 
