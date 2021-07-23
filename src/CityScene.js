@@ -8,11 +8,12 @@ import { BaseScene } from "./BaseScene";
 export class CityScene extends BaseScene {
 
     constructor() {
-        super(75, window.innerWidth / window.innerHeight, 15.1, 100000);
+        super(50, window.innerWidth / window.innerHeight, 0.01, 20000);
         this.cityScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
+
         
         this.options = {
             color: "#ffffff",
@@ -114,11 +115,20 @@ export class CityScene extends BaseScene {
             }
         })
         this.scene.add(this.cityScene);
-        this.cityScene.position.y = -200;
+        this.cityScene.position.x = -850;
+        this.cityScene.position.y = -900;
+        this.cityScene.position.z = -250;
+        this.cityScene.rotation.y = 11.5;
 
-        this.camera.position.x = -230;
-        this.camera.position.y = -5;
-        this.camera.position.z = 800;
+        this.controls.minAzimuthAngle = -Math.PI ;
+
+        this.controls.maxAzimuthAngle = -Math.PI + Math.PI ;
+        this.controls.minPolarAngle = Math.PI / 4 + Math.PI / 5;
+        this.controls.maxPolarAngle = Math.PI / 3 + Math.PI / 5;
+        this.controls.minDistance = 800;
+        this.controls.maxDistance = 1600
+
+
         this.controls.update();
         this.buildBackGround();
 
@@ -139,9 +149,12 @@ export class CityScene extends BaseScene {
 
 
         let geometry = new THREE.SphereBufferGeometry(20, 32, 32);
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        let material = new THREE.MeshBasicMaterial({ color: 0xd9be6d });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
+        this.lightSphere.position.x = 0
+        this.lightSphere.position.y = 0
+        this.lightSphere.position.z = 0
 
         this.scene.add(this.lightSphere);
 
@@ -150,9 +163,9 @@ export class CityScene extends BaseScene {
 
     buildGUI() {
         this.gui.addFolder("Light Position");
-        let xController = this.gui.add(this.lightSphere.position, "x", -1000, 1000, 0.01);
-        let yController = this.gui.add(this.lightSphere.position, "y", -1000, 1000, 0.01);
-        let zController = this.gui.add(this.lightSphere.position, "z", -2000, 2000, 0.01);
+        let xController = this.gui.add(this.lightSphere.position, "x", 840, 1200, 0.01);
+        let yController = this.gui.add(this.lightSphere.position, "y", 820, 1200, 0.01);
+        let zController = this.gui.add(this.lightSphere.position, "z", -120, 2000, 0.01);
 
 
         this.controls.addEventListener("change", () => updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms))
