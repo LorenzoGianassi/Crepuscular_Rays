@@ -8,7 +8,7 @@ export class CityScene extends BaseScene {
     constructor() {
         super();
 
-        this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000)
         this.controls = new OrbitControls(this.camera, renderer.domElement);
         this.AbstractSphereScene = new THREE.Group
         this.effectComposer = this.composeEffects()
@@ -24,6 +24,7 @@ export class CityScene extends BaseScene {
         this.buildGUI();
 
     }
+
 
 
     render() {
@@ -113,7 +114,7 @@ export class CityScene extends BaseScene {
 
 
 
-        let geometry = new THREE.SphereBufferGeometry(4, 32, 32);
+        let geometry = new THREE.SphereBufferGeometry(20, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
@@ -124,9 +125,9 @@ export class CityScene extends BaseScene {
 
     buildGUI() {
         this.gui.addFolder("Light Position");
-        let xController = this.gui.add(this.lightSphere.position, "x", -10, 10, 0.01);
-        let yController = this.gui.add(this.lightSphere.position, "y", -10, 10, 0.01);
-        let zController = this.gui.add(this.lightSphere.position, "z", -20, 20, 0.01);
+        let xController = this.gui.add(this.lightSphere.position, "x", -1000, 1000, 0.01);
+        let yController = this.gui.add(this.lightSphere.position, "y", -1000, 1000, 0.01);
+        let zController = this.gui.add(this.lightSphere.position, "z", -2000, 2000, 0.01);
 
 
         this.controls.addEventListener("change", () => updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms))
