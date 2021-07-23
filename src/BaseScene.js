@@ -7,7 +7,7 @@ import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurS
 import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { blendingShader, occlusionShader, renderer } from "./index.js";
-
+import { DEFAULT_LAYER, OCCLUSION_LAYER, updateShaderLightPosition } from "./index";
 import dat from 'dat.gui';
 
 export class BaseScene {
@@ -18,6 +18,7 @@ export class BaseScene {
     this.gui = new dat.GUI();
     this.controls = new OrbitControls(this.camera, renderer.domElement);
     this.baseCameraPosition = new THREE.Vector3();
+    this.baseSunPosition = new THREE.Vector3();
   }
 
 //  Abastract Methods
@@ -47,11 +48,57 @@ export class BaseScene {
     throw new Error("Method must be implemented.");
   }
 
-
+  // reset camera position
   resetPosition(){ 
     this.camera.position.copy(this.baseCameraPosition);       
     this.controls.update();
   }
+
+  // Light management
+  buildLight(radius,x,y,z) {
+    //AmbientLight
+    this.ambientLight = new THREE.AmbientLight("#2c3e50");
+    this.scene.add(this.ambientLight);
+
+
+    //PointLight
+    this.pointLight = new THREE.PointLight("#fffffff");
+    this.scene.add(this.pointLight);
+
+
+
+    let geometry = new THREE.SphereBufferGeometry(radius, 32, 32);
+    let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    this.lightSphere = new THREE.Mesh(geometry, material);
+    this.lightSphere.layers.set(OCCLUSION_LAYER);
+    this.lightSphere.position.set(x,y,z);
+
+
+    this.scene.add(this.lightSphere);
+}
+// reset sun position
+resetSunPosition(){ 
+  this.lightSphere.position.copy(this.baseSunPosition);       
+  this.controls.update();
+  this.gui.revert(this.baseSunPosition);
+  updateShaderLightPosition(this.lightSphere,this.camera,this.shaderUniforms)
+}
+
+// method t0 build the background of the scenes
+
+buildBackGround(path,radius,width,height) {
+  const textureloader = new THREE.TextureLoader();
+  const starGeometry = new THREE.SphereBufferGeometry(radius, width, height);
+  const texture = textureloader.load(path);
+  const starMaterial = new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.BackSide, 
+  });
+  let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
+  this.scene.add(backgroundSphere);
+
+  backgroundSphere.layers.set(DEFAULT_LAYER);
+}
 
   // PostProcessing methods using the Shaders
   composeEffects() {

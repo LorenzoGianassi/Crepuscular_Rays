@@ -11,6 +11,8 @@ export class PlaneScene extends BaseScene {
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,180);
+        this.baseSunPosition = new THREE.Vector3(0,5,-5);
+
         this.planeGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -36,7 +38,7 @@ export class PlaneScene extends BaseScene {
         this.pointsPath = this.createPath()
 
         this.buildScene();
-        this.buildLight();
+        this.buildLight(1.5,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
         this.mixer = new THREE.AnimationMixer();
         this.buildGUI();
 
@@ -161,53 +163,15 @@ export class PlaneScene extends BaseScene {
         this.planeGroupScene.position.y = 0;
         this.planeGroupScene.position.z = 0;
 
-        this.camera.position.z = 180;
+        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
         this.controls.update();
-        this.buildBackGround()
+        this.buildBackGround(sky,80,64,64)
 
 
         return Promise.resolve(this)
     }
 
-    buildLight() {
-        //AmbientLight
-        this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight);
-
-
-        //PointLight
-        this.pointLight = new THREE.PointLight("#fffffff");
-        this.scene.add(this.pointLight);
-
-
-
-        let geometry = new THREE.SphereBufferGeometry(1.5, 32, 32);
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        this.lightSphere = new THREE.Mesh(geometry, material);
-        this.lightSphere.layers.set(OCCLUSION_LAYER)
-        this.lightSphere.position.y = 5
-        this.lightSphere.position.z = -5
-
-
-        this.scene.add(this.lightSphere);
-
-    }
-
-
-
-    buildBackGround() {
-        const textureloader = new THREE.TextureLoader();
-        const starGeometry = new THREE.SphereBufferGeometry(80, 64, 64);
-        const texture = textureloader.load(sky);
-        const starMaterial = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.BackSide,
-        });
-        let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
-        this.scene.add(backgroundSphere);
-
-        backgroundSphere.layers.set(DEFAULT_LAYER);
-    }
+    
 
     buildGUI() {
         this.gui.addFolder("Light Position");
@@ -254,6 +218,7 @@ export class PlaneScene extends BaseScene {
 
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.add(this, "resetSunPosition").name("Reset Sun")
 
     }
 
