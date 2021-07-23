@@ -2,16 +2,7 @@ import testfile from "../models/statueGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
-import {
-    AmbientLight,
-    AxesHelper,
-    Mesh,
-    MeshBasicMaterial,
-    PerspectiveCamera,
-    PointLight,
-    SphereBufferGeometry,
-    TextureLoader
-} from "three";
+
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 
@@ -19,6 +10,7 @@ export class StatueScene extends BaseScene {
 
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
+        this.baseCameraPosition = new THREE.Vector3(0,0,200);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -82,7 +74,7 @@ export class StatueScene extends BaseScene {
             this.scene.add(gltf.scene);
             gltf.scene.position.x = 0;
             gltf.scene.position.y = 0;
-            gltf.scene.position.z = 0;
+            gltf.scene.position.z = 8;
 
 
 
@@ -176,6 +168,8 @@ export class StatueScene extends BaseScene {
         // folder of the gUI to enable animation
         this.gui.addFolder("Sun movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
+        this.gui.addFolder("Scene management")
+        this.gui.add(this, "resetPosition").name("Reset position")
     }
 }
 
