@@ -12,18 +12,13 @@ import {
     SphereBufferGeometry,
     TextureLoader
 } from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 
 export class StatueScene extends BaseScene {
 
     constructor() {
-        super();
-
-        this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
-        this.controls = new OrbitControls(this.camera, renderer.domElement);
-
+        super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]

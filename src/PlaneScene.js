@@ -1,7 +1,7 @@
 
 import planeFile from "../models/planeGLTF/scene.gltf";
 
-import sky from "../models/backgrounds/cloud_texture.jpg";
+import sky from "../models/backgrounds/cloud.jpg";
 import * as THREE from 'three';
 import {
     AmbientLight,
@@ -16,16 +16,13 @@ import {
     SphereBufferGeometry,
     TextureLoader
 } from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 export class PlaneScene extends BaseScene {
 
     constructor() {
-        super();
+        super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
 
-        this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
-        this.controls = new OrbitControls(this.camera, renderer.domElement);
         this.planeGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -217,7 +214,7 @@ export class PlaneScene extends BaseScene {
 
 
 
-        let geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
+        let geometry = new THREE.SphereBufferGeometry(1.5, 32, 32);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)

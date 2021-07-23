@@ -1,5 +1,5 @@
 import cityFile from "../models/cityGLTF/scene.gltf";
-import sky from "../models/backgrounds/cloud_texture.jpg";
+import sky from "../models/backgrounds/cloud.jpg";
 
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -8,11 +8,8 @@ import { BaseScene } from "./BaseScene";
 export class CityScene extends BaseScene {
 
     constructor() {
-        super();
-
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000)
-        this.controls = new OrbitControls(this.camera, renderer.domElement);
-        this.AbstractSphereScene = new THREE.Group
+        super(75, window.innerWidth / window.innerHeight, 15.1, 100000);
+        this.cityScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -47,6 +44,7 @@ export class CityScene extends BaseScene {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms);
         // this.rotateSphere();      
         this.loopSun();  
+        //console.log(this.camera.position)
     }
 
 
@@ -101,8 +99,8 @@ export class CityScene extends BaseScene {
 
 
     async buildScene() {
-        this.AbstractSphereScene = (await this.asyncLoad(cityFile)).scene
-        this.AbstractSphereScene.traverse(function (obj) {
+        this.cityScene = (await this.asyncLoad(cityFile)).scene
+        this.cityScene.traverse(function (obj) {
             if (obj.isMesh) {
                 let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                 let occlusionObject = new THREE.Mesh(obj.geometry, material);
@@ -114,10 +112,12 @@ export class CityScene extends BaseScene {
 
             }
         })
-        this.scene.add(this.AbstractSphereScene);
-        this.AbstractSphereScene.position.z = 5;
+        this.scene.add(this.cityScene);
+        this.cityScene.position.y = -200;
 
-        this.camera.position.z = 200;
+        this.camera.position.x = -230;
+        this.camera.position.y = -5;
+        this.camera.position.z = 800;
         this.controls.update();
         this.buildBackGround();
 
@@ -145,6 +145,7 @@ export class CityScene extends BaseScene {
         this.scene.add(this.lightSphere);
 
     }
+
 
     buildGUI() {
         this.gui.addFolder("Light Position");
@@ -190,6 +191,10 @@ export class CityScene extends BaseScene {
         // folder of the GUI to enable animation
         this.gui.addFolder("Sun MOvement");
         this.gui.add(this.options, "animate").name("Move Sun");
+
+        this.gui.addFolder("Scene management")
+        this.gui.add(this, "resetPosition").name("Reset position")
+
 
     }
 

@@ -5,17 +5,18 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { CopyShader } from "three/examples/jsm/shaders/CopyShader";
 import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader";
 import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { blendingShader, occlusionShader, renderer } from "./index.js";
 
 import dat from 'dat.gui';
 
 export class BaseScene {
 
-  constructor() {
-    
+  constructor(fov, aspect, near, far) {
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
     this.scene = new THREE.Scene;
     this.gui = new dat.GUI();
-  
+    this.controls = new OrbitControls(this.camera, renderer.domElement);
   }
 
 //  Abastract Methods
@@ -43,6 +44,14 @@ export class BaseScene {
 
   update() {
     throw new Error("Method must be implemented.");
+  }
+
+
+  resetPosition(){        
+    this.camera.position.x = -230;
+    this.camera.position.y = -5;
+    this.camera.position.z = 800;
+    this.controls.update();
   }
 
   // PostProcessing methods using the Shaders
