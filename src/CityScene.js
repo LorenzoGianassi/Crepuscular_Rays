@@ -13,6 +13,7 @@ export class CityScene extends BaseScene {
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
+        
         this.options = {
             color: "#ffffff",
             animate: false,
