@@ -3,19 +3,7 @@ import planeFile from "../models/planeGLTF/scene.gltf";
 
 import sky from "../models/backgrounds/cloud_texture.jpg";
 import * as THREE from 'three';
-import {
-    AmbientLight,
-    AxesHelper,
-    Clock,
-    Group,
-    LoopRepeat,
-    Mesh,
-    MeshBasicMaterial,
-    PerspectiveCamera,
-    PointLight,
-    SphereBufferGeometry,
-    TextureLoader
-} from "three";
+import {Clock} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
@@ -31,12 +19,13 @@ export class PlaneScene extends BaseScene {
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
         this.options = {
-            color: "#ffffff",
-            animate: false,
+            animate: true,
             animation_speed: 1,
+            flying_speed: 1,
         }
         this.clock = new Clock()
         this.angle = 0;
+        // variables for the fly of the plane
         this.up = new THREE.Vector3(0, 0, -1);
         this.axis = new THREE.Vector3();
         this.spline = new THREE.CatmullRomCurve3([
@@ -66,7 +55,7 @@ export class PlaneScene extends BaseScene {
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
-        renderer.setClearColor("#030509");
+        // renderer.setClearColor("#030509");
 
         this.sceneComposer.render();
     }
@@ -80,21 +69,6 @@ export class PlaneScene extends BaseScene {
 
     }
 
-
-
-    loopSun() {
-        if (this.options.animate == true) {
-            var radius = 10,
-                xPos = Math.sin(this.angle) * radius,
-                yPos = Math.cos(this.angle) * radius;
-            this.lightSphere.position.set(xPos, yPos, 0);
-            this.pointLight.position.set(xPos, yPos, 0);
-
-            this.angle += 0.008
-            updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-        }
-    }
-
     positionLight() {
         let light = this.scene.getObjectByName('pointLight');
         if (pos <= 1) {
@@ -106,9 +80,7 @@ export class PlaneScene extends BaseScene {
     }
 
     createPath() {
-
         const pointsPath = new THREE.CurvePath();
-
         const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(-15, 0, 3), 
             new THREE.Vector3(0, 0, 0),
@@ -124,8 +96,6 @@ export class PlaneScene extends BaseScene {
         // Create the final object to add to the scene
         var curveObject = new THREE.Line(geometry, material);
         this.scene.add(curveObject)
-
-
 
         pointsPath.add(curve);
         return pointsPath;
@@ -143,7 +113,7 @@ export class PlaneScene extends BaseScene {
             this.planeGroupScene.quaternion.setFromAxisAngle(this.axis, radians);
 
             renderer.render(this.scene, this.camera);
-            this.pos += 0.0005;
+            this.pos += 0.0005*this.options.flying_speed;
             if (this.pos > 1) {
                 this.pos = 0;
             }
@@ -181,8 +151,6 @@ export class PlaneScene extends BaseScene {
             if (obj.isMesh) {
                 let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                 let occlusionObject = new THREE.Mesh(obj.geometry, material);
-                //obj.add(axesHelper);
-                occlusionObject.add(new THREE.AxesHelper(100));
                 occlusionObject.layers.set(OCCLUSION_LAYER)
                 if (obj.parent != null) {
                     obj.parent.add(occlusionObject)
@@ -194,10 +162,9 @@ export class PlaneScene extends BaseScene {
         this.scene.add(this.planeGroupScene);
         this.planeGroupScene.position.x = -15;
         this.planeGroupScene.position.y = 0;
-        this.planeGroupScene.position.z = 3;
-        this.scene.add(new AxesHelper(10))
+        this.planeGroupScene.position.z = 0;
 
-        this.camera.position.z = 200;
+        this.camera.position.z = 180;
         this.controls.update();
         this.buildBackGround()
 
@@ -221,7 +188,8 @@ export class PlaneScene extends BaseScene {
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
-        this.lightSphere.position.y = 6
+        this.lightSphere.position.y = 5
+        this.lightSphere.position.z = -5
 
 
         this.scene.add(this.lightSphere);
@@ -238,7 +206,6 @@ export class PlaneScene extends BaseScene {
             map: texture,
             side: THREE.BackSide,
         });
-        // const starMesh = new THREE.Mesh(starGeometry,starMaterial);
         let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
         this.scene.add(backgroundSphere);
 
@@ -279,18 +246,14 @@ export class PlaneScene extends BaseScene {
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
-        this.gui.addFolder("Change color");
-        this.gui.addColor(this.options, "color").onFinishChange(() => {
-            this.lightSphere.material.setValues({
-                color: this.options.color
-            });
-            this.update()
-        });
+
         // folder of the gUI to enable animation
         this.gui.addFolder("Flying Management");
         this.gui.add(this.options, "animate").name("Enable Fly");
         this.gui.addFolder("Speed of the animations",);
         this.gui.add(this.options, "animation_speed", 0, 2, 0.01).name("Speed");
+        this.gui.addFolder("Speed of Flying",);
+        this.gui.add(this.options, "flying_speed", 0, 10, 0.01).name("Speed");
 
     }
 

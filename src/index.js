@@ -113,7 +113,7 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("CityScene");
+    selector.setValue("StatueScene");
 }
 
 SelectScene();

@@ -28,7 +28,6 @@ export class StatueScene extends BaseScene {
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
         this.options = { 
-            color: "#ffffff",
             animate: false,
         }
         this.angle = 0;
@@ -77,8 +76,6 @@ export class StatueScene extends BaseScene {
                 if (obj.isMesh) {
                     let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                     let occlusionObject = new THREE.Mesh(obj.geometry, material)
-                    //obj.add(axesHelper);
-                    occlusionObject.add(new THREE.AxesHelper(100));
                     occlusionObject.layers.set(OCCLUSION_LAYER)
                     if (obj.parent != null) {
                         obj.parent.add(occlusionObject)
@@ -88,17 +85,16 @@ export class StatueScene extends BaseScene {
             })
 
             this.scene.add(gltf.scene);
-            gltf.scene.position.x = 3;
-            gltf.scene.position.y = -0.5;
-            gltf.scene.position.z = 5;
+            gltf.scene.position.x = 0;
+            gltf.scene.position.y = 0;
+            gltf.scene.position.z = 0;
 
 
 
         }, function (error) {
-            //  console.error( error );
+             console.error( error );
         });
 
-        this.scene.add(new AxesHelper(10))
 
 
         this.camera.position.z = 200;
@@ -182,18 +178,9 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
-        this.gui.addFolder("Change color");
-        this.gui.addColor(this.options, "color").onFinishChange(() => {
-            this.lightSphere.material.setValues({
-                color: this.options.color
-            });
-            this.update()
-        });
         // folder of the gUI to enable animation
         this.gui.addFolder("Sun movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
-        
-
     }
 }
 

@@ -1,5 +1,5 @@
 import cityFile from "../models/cityGLTF/scene.gltf";
-import sky from "../models/backgrounds/cloud_texture.jpg";
+import sky from "../models/backgrounds/sky_texture.jpg";
 
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -16,6 +16,7 @@ export class CityScene extends BaseScene {
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
+        
         this.options = {
             color: "#ffffff",
             animate: false,

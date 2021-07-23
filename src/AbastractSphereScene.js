@@ -15,7 +15,6 @@ export class AbstractSphereScene extends BaseScene {
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
         this.options = {
-            color: "#ffffff",
             animate: true, 
         }
         this.angle = 0;
@@ -149,7 +148,6 @@ export class AbstractSphereScene extends BaseScene {
         })
 
 
-
         this.gui.addFolder("Volumetric scattering parameters");
 
         this.gui.add(this.shaderUniforms.weight, "value", 0, 1, 0.01).name('Weight');
@@ -158,18 +156,10 @@ export class AbstractSphereScene extends BaseScene {
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
-        this.gui.addFolder("Change color");
-        this.gui.addColor(this.options, "color").onFinishChange(() => {
-            this.lightSphere.material.setValues({
-                color: this.options.color
-            });
-            this.update()
-        });
         // folder of the GUI to enable animation
         this.gui.addFolder("Rotation Management");
         this.gui.add(this.options, "animate").name("Enable Rotation");
 
     }
-
 
 }
