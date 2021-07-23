@@ -148,8 +148,6 @@ export class PlaneScene extends BaseScene {
                 this.pos = 0;
             }
 
-     
-
         }
 
     }

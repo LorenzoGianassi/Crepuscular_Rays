@@ -1,4 +1,6 @@
 import cityFile from "../models/cityGLTF/scene.gltf";
+import sky from "../models/backgrounds/cloud_texture.jpg";
+
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
@@ -64,6 +66,26 @@ export class CityScene extends BaseScene {
 
 
 
+    buildBackGround() {
+        const textureloader = new THREE.TextureLoader();
+
+
+        const starGeometry = new THREE.SphereBufferGeometry(10000, 600, 600);
+        const texture = textureloader.load(sky);
+        const starMaterial = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.BackSide,
+        });
+        // const starMesh = new THREE.Mesh(starGeometry,starMaterial);
+        let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
+        this.scene.add(backgroundSphere);
+
+        backgroundSphere.layers.set(DEFAULT_LAYER);
+    }
+
+
+
+
     asyncLoad(filepath, onProgress = () => {
     }) {
         return new Promise(((resolve, reject) => {
@@ -97,6 +119,7 @@ export class CityScene extends BaseScene {
 
         this.camera.position.z = 200;
         this.controls.update();
+        this.buildBackGround();
 
 
         return Promise.resolve(this)

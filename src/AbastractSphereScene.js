@@ -16,7 +16,7 @@ export class AbstractSphereScene extends BaseScene {
         this.sceneComposer = this.effectComposer[1]
         this.options = {
             color: "#ffffff",
-            animate: true,
+            animate: true, 
         }
         this.angle = 0;
         this.buildScene();
@@ -106,12 +106,12 @@ export class AbstractSphereScene extends BaseScene {
     buildLight() {
         //AmbientLight
         this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight);
+        this.scene.add(this.ambientLight); 
 
 
         //PointLight
         this.pointLight = new THREE.PointLight("#fffffff");
-        this.scene.add(this.pointLight);
+        this.scene.add(this.pointLight); 
 
 
 
