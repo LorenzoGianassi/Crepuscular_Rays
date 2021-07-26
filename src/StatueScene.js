@@ -1,6 +1,6 @@
 import testfile from "../models/statueGLTF/scene.gltf";
 
-import sky from "../models/backgrounds/galaxy.png";
+import galaxy from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
 
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
@@ -11,6 +11,7 @@ export class StatueScene extends BaseScene {
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,200);
+        this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -19,8 +20,9 @@ export class StatueScene extends BaseScene {
         }
         this.angle = 0;
         this.buildScene();
+        this.buildLight(0.8,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
         this.buildGUI();
-
+ 
     }
 
 
@@ -84,53 +86,12 @@ export class StatueScene extends BaseScene {
 
 
 
-        this.camera.position.z = 200;
+        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
         this.controls.update();
-        this.buildLight();
-        this.buildBackGround()
+        this.buildBackGround(galaxy,80,64,64)
     }
 
-    buildLight() {
-        //AmbientLight
-        this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight);
-
-
-        //PointLight
-        this.pointLight = new THREE.PointLight("#fffffff");
-        this.scene.add(this.pointLight);
-
-
-
-        let geometry = new THREE.SphereBufferGeometry(0.8, 32, 32);
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        this.lightSphere = new THREE.Mesh(geometry, material);
-        this.lightSphere.layers.set(OCCLUSION_LAYER)
-
-
-        this.scene.add(this.lightSphere);
-
-    }
-
-
-
-    buildBackGround() {
-        const textureloader = new THREE.TextureLoader();
-
-
-        const starGeometry = new THREE.SphereBufferGeometry(80, 64, 64);
-        const texture = textureloader.load(sky);
-        const starMaterial = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.BackSide,
-        });
-        // const starMesh = new THREE.Mesh(starGeometry,starMaterial);
-        let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
-        this.scene.add(backgroundSphere);
-
-        backgroundSphere.layers.set(DEFAULT_LAYER);
-    }
-
+    
     buildGUI() {
         this.gui.addFolder("Light Position");
         let xController = this.gui.add(this.lightSphere.position, "x", -10, 10, 0.01);
@@ -169,7 +130,8 @@ export class StatueScene extends BaseScene {
         this.gui.addFolder("Sun movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
         this.gui.addFolder("Scene management")
-        this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.add(this, "resetPosition").name("Reset Camera");
+        this.gui.add(this, "resetSunPosition").name("Reset Sun")
     }
 }
 

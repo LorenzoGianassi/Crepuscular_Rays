@@ -1,6 +1,5 @@
 import sphereFile from "../models/abstractSphereGLTF/scene.gltf";
 import * as THREE from 'three';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 export class AbstractSphereScene extends BaseScene {
@@ -8,7 +7,8 @@ export class AbstractSphereScene extends BaseScene {
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,200);
-        this.AbstractSphereScene = new THREE.Group
+        this.baseSunPosition = new THREE.Vector3(0,0,0);
+        this.AbstractSphereScene = new THREE.Group();
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -17,7 +17,7 @@ export class AbstractSphereScene extends BaseScene {
         }
         this.angle = 0;
         this.buildScene();
-        this.buildLight();
+        this.buildLight(1.2,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
         this.buildGUI();
 
     }
@@ -93,33 +93,13 @@ export class AbstractSphereScene extends BaseScene {
         this.scene.add(this.AbstractSphereScene);
         this.AbstractSphereScene.position.z = 6;
 
-        this.camera.position.z = 200;
+        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
         this.controls.update();
 
 
         return Promise.resolve(this)
     }
 
-    buildLight() {
-        //AmbientLight
-        this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight); 
-
-
-        //PointLight
-        this.pointLight = new THREE.PointLight("#fffffff");
-        this.scene.add(this.pointLight); 
-
-
-
-        let geometry = new THREE.SphereBufferGeometry(1.2, 32, 32);
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        this.lightSphere = new THREE.Mesh(geometry, material);
-        this.lightSphere.layers.set(OCCLUSION_LAYER)
-
-        this.scene.add(this.lightSphere);
-
-    }
 
     buildGUI() {
         this.gui.addFolder("Light Position");
@@ -158,7 +138,8 @@ export class AbstractSphereScene extends BaseScene {
         this.gui.addFolder("Rotation Management");
         this.gui.add(this.options, "animate").name("Enable Rotation");
         this.gui.addFolder("Scene management")
-        this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.add(this, "resetPosition").name("Reset position");
+        this.gui.add(this, "resetSunPosition").name("Reset Sun")
 
     }
 

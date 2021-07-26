@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
 import { PlaneScene } from './PlaneScene';
 import { AbstractSphereScene } from './AbastractSphereScene';
-import { cityFile, CityScene } from './CityScene';
+import { CityScene } from './CityScene';
 
 
 
@@ -114,7 +114,7 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("CityScene");
+    selector.setValue("StatueScene"); 
 }
 
 SelectScene();
