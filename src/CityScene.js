@@ -8,7 +8,7 @@ import { BaseScene } from "./BaseScene";
 export class CityScene extends BaseScene {
 
     constructor() {
-        super(75, window.innerWidth / window.innerHeight, 15.1, 100000);
+        super(50, window.innerWidth / window.innerHeight, 15.1, 100000);
         this.cityScene = new THREE.Group();
         this.baseCameraPosition = new THREE.Vector3(-230,-5,800);
         this.effectComposer = this.composeEffects()
@@ -16,6 +16,7 @@ export class CityScene extends BaseScene {
         this.sceneComposer = this.effectComposer[1]
 
         
+
         this.options = {
             color: "#ffffff",
             animate: false,
@@ -116,8 +117,9 @@ export class CityScene extends BaseScene {
             }
         })
         this.scene.add(this.cityScene);
+        this.controls.target.set(this.cityScene.position.x = -850, this.cityScene.position.y = -700, this.cityScene.position.z = -200)
         this.cityScene.position.x = -850;
-        this.cityScene.position.y = -900;
+        this.cityScene.position.y = -980;
         this.cityScene.position.z = -250;
         this.cityScene.rotation.y = 11.5;
 
@@ -131,7 +133,7 @@ export class CityScene extends BaseScene {
 
 
         this.controls.update();
-        this.buildBackGround();
+       // this.buildBackGround();
 
 
         return Promise.resolve(this)
@@ -149,14 +151,10 @@ export class CityScene extends BaseScene {
 
 
 
-        let geometry = new THREE.SphereBufferGeometry(20, 32, 32);
+        let geometry = new THREE.SphereBufferGeometry(50, 80, 80);
         let material = new THREE.MeshBasicMaterial({ color: 0xd9be6d });
         this.lightSphere = new THREE.Mesh(geometry, material);
         this.lightSphere.layers.set(OCCLUSION_LAYER)
-        this.lightSphere.position.x = 0
-        this.lightSphere.position.y = 0
-        this.lightSphere.position.z = 0
-
         this.scene.add(this.lightSphere);
 
     }
@@ -164,9 +162,9 @@ export class CityScene extends BaseScene {
 
     buildGUI() {
         this.gui.addFolder("Light Position");
-        let xController = this.gui.add(this.lightSphere.position, "x", 840, 1200, 0.01);
-        let yController = this.gui.add(this.lightSphere.position, "y", 820, 1200, 0.01);
-        let zController = this.gui.add(this.lightSphere.position, "z", -120, 2000, 0.01);
+        let xController = this.gui.add(this.lightSphere.position, "x", -120, 120, 0.01);
+        let yController = this.gui.add(this.lightSphere.position, "y", -120, 120, 0.01);
+        let zController = this.gui.add(this.lightSphere.position, "z", -200, 200, 0.01);
 
 
         this.controls.addEventListener("change", () => updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms))
