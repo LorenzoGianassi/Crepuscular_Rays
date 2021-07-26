@@ -27,13 +27,6 @@ export class PlaneScene extends BaseScene {
         // variables for the fly of the plane
         this.up = new THREE.Vector3(0, 0, -1);
         this.axis = new THREE.Vector3();
-        this.spline = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(-100, 20, 100),
-            new THREE.Vector3(-40, 20, 20),
-            new THREE.Vector3(70, 20, 10),
-            new THREE.Vector3(100, 20, 30),
-            new THREE.Vector3(-100, 20, 100)]);
-        this.splinePoint = this.spline.getPoints(50)
         this.pos = 0;
         this.pointsPath = this.createPath()
 
@@ -65,17 +58,6 @@ export class PlaneScene extends BaseScene {
         var delta = this.clock.getDelta()
         this.mixer.update(delta * this.options.animation_speed)
         this.flyPlane()
-
-    }
-
-    positionLight() {
-        let light = this.scene.getObjectByName('pointLight');
-        if (pos <= 1) {
-            light.position = spline.getPointAt(pos);
-            pos += 0.001
-        } else {
-            pos = 0;
-        }
     }
 
     createPath() {

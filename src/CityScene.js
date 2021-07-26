@@ -19,8 +19,15 @@ export class CityScene extends BaseScene {
         this.options = {
             color: "#ffffff",
             animate: false,
+            sun_speed: 1,
         }
+
         this.angle = 0;
+        // variables for the fly of the plane
+        this.up = new THREE.Vector3(0, 0, -1);
+        this.axis = new THREE.Vector3();
+        this.pos = 0;
+        this.pointsPath = this.createPath()
         this.buildScene();
         this.buildLight(50, 80, 80, this.baseSunPosition.x, this.baseSunPosition.y, this.baseSunPosition.z, 0xd9be6d);
         this.buildGUI();
@@ -49,10 +56,56 @@ export class CityScene extends BaseScene {
         // this.rotateSphere();      
         this.loopSun(); 
 
-        console.log(this.camera.position)
+        this.flyPlane()
+
     }
 
+    createPath() {
+        const pointsPath = new THREE.CurvePath();
+        const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-600, -1000, -1400), 
+            new THREE.Vector3(-80, 100, -1000),
+            new THREE.Vector3(-60, 200, -1000),
+            new THREE.Vector3(-40, 100, -1000),
+            new THREE.Vector3(100, -1000, 500), 
 
+        ]);
+
+        var points = curve.getPoints(50);
+        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+        // Create the final object to add to the scene
+        var curveObject = new THREE.Line(geometry, material);
+        this.scene.add(curveObject)
+
+        pointsPath.add(curve);
+        return pointsPath;
+    }
+
+    flyPlane() {
+        if (this.options.animate == true) {
+
+            const newPosition = this.pointsPath.getPoint(this.pos);
+            const tangent = this.pointsPath.getTangent(this.pos);
+            this.lightSphere.position.copy(newPosition);
+            this.pointLight.position.copy(newPosition);
+            this.axis.crossVectors(this.up, tangent).normalize();
+            const radians = Math.acos(this.up.dot(tangent));
+            this.lightSphere.quaternion.setFromAxisAngle(this.axis, radians);
+            this.pointLight.quaternion.setFromAxisAngle(this.axis, radians);
+            updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+            renderer.render(this.scene, this.camera);
+            this.pos += 0.0005*this.options.sun_speed;
+            if (this.pos > 1) {
+                this.pos = 0;
+                updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
+            }
+
+        }
+
+    }
 
     loopSun() {
         if (this.options.animate == true) {
