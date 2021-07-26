@@ -17,6 +17,7 @@ export class BaseScene {
     this.scene = new THREE.Scene;
     this.gui = new dat.GUI();
     this.controls = new OrbitControls(this.camera, renderer.domElement);
+    this.baseCameraPosition = new THREE.Vector3();
   }
 
 //  Abastract Methods
@@ -47,10 +48,8 @@ export class BaseScene {
   }
 
 
-  resetPosition(){        
-    this.camera.position.x = -230;
-    this.camera.position.y = -5;
-    this.camera.position.z = 800;
+  resetPosition(){ 
+    this.camera.position.copy(this.baseCameraPosition);       
     this.controls.update();
   }
 

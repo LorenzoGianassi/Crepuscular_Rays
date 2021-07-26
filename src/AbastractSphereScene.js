@@ -6,10 +6,8 @@ import { BaseScene } from "./BaseScene";
 export class AbstractSphereScene extends BaseScene {
 
     constructor() {
-        super();
-
-        this.camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 0.1, 10000)
-        this.controls = new OrbitControls(this.camera, renderer.domElement);
+        super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
+        this.baseCameraPosition = new THREE.Vector3(0,0,200);
         this.AbstractSphereScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -159,6 +157,8 @@ export class AbstractSphereScene extends BaseScene {
         // folder of the GUI to enable animation
         this.gui.addFolder("Rotation Management");
         this.gui.add(this.options, "animate").name("Enable Rotation");
+        this.gui.addFolder("Scene management")
+        this.gui.add(this, "resetPosition").name("Reset position")
 
     }
 

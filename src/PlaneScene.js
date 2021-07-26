@@ -10,7 +10,7 @@ export class PlaneScene extends BaseScene {
 
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
-
+        this.baseCameraPosition = new THREE.Vector3(0,0,180);
         this.planeGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -251,6 +251,9 @@ export class PlaneScene extends BaseScene {
         this.gui.add(this.options, "animation_speed", 0, 2, 0.01).name("Speed");
         this.gui.addFolder("Speed of Flying",);
         this.gui.add(this.options, "flying_speed", 0, 10, 0.01).name("Speed");
+
+        this.gui.addFolder("Scene management")
+        this.gui.add(this, "resetPosition").name("Reset position")
 
     }
 

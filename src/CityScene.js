@@ -8,8 +8,9 @@ import { BaseScene } from "./BaseScene";
 export class CityScene extends BaseScene {
 
     constructor() {
-        super(50, window.innerWidth / window.innerHeight, 0.01, 20000);
-        this.cityScene = new THREE.Group
+        super(75, window.innerWidth / window.innerHeight, 15.1, 100000);
+        this.cityScene = new THREE.Group();
+        this.baseCameraPosition = new THREE.Vector3(-230,-5,800);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
