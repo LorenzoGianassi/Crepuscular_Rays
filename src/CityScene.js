@@ -60,11 +60,10 @@ export class CityScene extends BaseScene {
         const pointsPath = new THREE.CurvePath();
         const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(-600, -1000, -1400), 
-            new THREE.Vector3(-80, 100, -1000),
-            new THREE.Vector3(-60, 200, -1000),
-            new THREE.Vector3(-40, 100, -1000),
+            new THREE.Vector3(0, 100, -1000),
+            new THREE.Vector3(20, 250, -800),
+            new THREE.Vector3(20, 250, -600),
             new THREE.Vector3(100, -1000, 500), 
-
         ]);
 
         var points = curve.getPoints(50);
