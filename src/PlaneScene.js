@@ -12,8 +12,9 @@ export class PlaneScene extends BaseScene {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,180);
         this.baseSunPosition = new THREE.Vector3(0,5,-5);
+        this.planeGroupScene = new THREE.Group();
+        this.groupBasePosition = new THREE.Vector3(-15,0,0);
 
-        this.planeGroupScene = new THREE.Group
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
@@ -159,11 +160,10 @@ export class PlaneScene extends BaseScene {
             }
         })
         this.scene.add(this.planeGroupScene);
-        this.planeGroupScene.position.x = -15;
-        this.planeGroupScene.position.y = 0;
-        this.planeGroupScene.position.z = 0;
+        this.planeGroupScene.position.copy(this.groupBasePosition);     
 
-        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
+
+        this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();
         this.buildBackGround(sky,80,64,64)
 
