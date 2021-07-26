@@ -8,10 +8,11 @@ export class AbstractSphereScene extends BaseScene {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,200);
         this.baseSunPosition = new THREE.Vector3(0,0,0);
-        this.AbstractSphereScene = new THREE.Group();
-        this.effectComposer = this.composeEffects()
+        this.sphereGroupScene = new THREE.Group();
+        this.groupBasePosition = new THREE.Vector3(0,0,6);
+        this.effectComposer = this.composeEffects();
         this.occlusionComposer = this.effectComposer[0]
-        this.sceneComposer = this.effectComposer[1]
+        this.sceneComposer = this.effectComposer[1] 
         this.options = {
             animate: true, 
         }
@@ -91,9 +92,10 @@ export class AbstractSphereScene extends BaseScene {
             }
         })
         this.scene.add(this.AbstractSphereScene);
-        this.AbstractSphereScene.position.z = 6;
 
-        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
+        this.camera.position.copy(this.baseCameraPosition); 
+        this.sphereGroupScene.position.copy(this.groupBasePosition);     
+    
         this.controls.update();
 
 
@@ -102,7 +104,7 @@ export class AbstractSphereScene extends BaseScene {
 
 
     buildGUI() {
-        this.gui.addFolder("Light Position");
+        this.gui.addFolder("Light Position"); 
         let xController = this.gui.add(this.lightSphere.position, "x", -10, 10, 0.01);
         let yController = this.gui.add(this.lightSphere.position, "y", -10, 10, 0.01);
         let zController = this.gui.add(this.lightSphere.position, "z", -20, 20, 0.01);

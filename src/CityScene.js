@@ -2,7 +2,6 @@ import cityFile from "../models/cityGLTF/scene.gltf";
 import sky from "../models/backgrounds/cloud.jpg";
 
 import * as THREE from 'three';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 export class CityScene extends BaseScene {
@@ -11,13 +10,12 @@ export class CityScene extends BaseScene {
         super(50, window.innerWidth / window.innerHeight, 15.1, 100000);
         this.cityScene = new THREE.Group();
         this.baseCameraPosition = new THREE.Vector3(-2440,-840,-150);
-        this.baseCityPosition = new THREE.Vector3(-850,-1060,-250);
+        this.groupBasePosition = new THREE.Vector3(-850,-1060,-250);
         this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
         this.options = {
-            color: "#ffffff",
             animate: false,
             sun_speed: 1,
         }
@@ -45,8 +43,6 @@ export class CityScene extends BaseScene {
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
-        // renderer.setClearColor("#030509");
-
         this.sceneComposer.render();
     }
 
@@ -120,26 +116,6 @@ export class CityScene extends BaseScene {
         }
     }
 
-
-
-    buildBackGround() {
-        const textureloader = new THREE.TextureLoader();
-        const starGeometry = new THREE.SphereBufferGeometry(10000, 600, 600);
-        const texture = textureloader.load(sky);
-        const starMaterial = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.BackSide,
-        });
-        // const starMesh = new THREE.Mesh(starGeometry,starMaterial);
-        let backgroundSphere = new THREE.Mesh(starGeometry, starMaterial);
-        this.scene.add(backgroundSphere);
-
-        backgroundSphere.layers.set(DEFAULT_LAYER);
-    }
-
-
-
-
     asyncLoad(filepath, onProgress = () => {
     }) {
         return new Promise(((resolve, reject) => {
@@ -169,7 +145,7 @@ export class CityScene extends BaseScene {
             }
         })
         this.camera.position.copy(this.baseCameraPosition);     
-        this.cityScene.position.copy(this.baseCityPosition);     
+        this.cityScene.position.copy(this.groupBasePosition);     
         this.scene.add(this.cityScene);
         this.controls.target.set(-750, -700, 0)
         this.cityScene.rotation.y = 11.5;
@@ -225,13 +201,6 @@ export class CityScene extends BaseScene {
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
-        this.gui.addFolder("Change color");
-        this.gui.addColor(this.options, "color").onFinishChange(() => {
-            this.lightSphere.material.setValues({
-                color: this.options.color
-            });
-            this.update()
-        });
         // folder of the GUI to enable animation
         this.gui.addFolder("Sun MOvement");
         this.gui.add(this.options, "animate").name("Move Sun");

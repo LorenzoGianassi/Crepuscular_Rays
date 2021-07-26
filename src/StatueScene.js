@@ -13,8 +13,10 @@ export class StatueScene extends BaseScene {
         this.baseCameraPosition = new THREE.Vector3(0,0,200);
         this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.effectComposer = this.composeEffects()
+        this.groupBasePosition = new THREE.Vector3(0,0,8);
+
         this.occlusionComposer = this.effectComposer[0]
-        this.sceneComposer = this.effectComposer[1]
+        this.sceneComposer = this.effectComposer[1] 
         this.options = { 
             animate: false,
         }
@@ -74,9 +76,8 @@ export class StatueScene extends BaseScene {
             })
 
             this.scene.add(gltf.scene);
-            gltf.scene.position.x = 0;
-            gltf.scene.position.y = 0;
-            gltf.scene.position.z = 8;
+            gltf.scene.position.copy(this.groupBasePosition);     
+
 
 
 
@@ -86,7 +87,7 @@ export class StatueScene extends BaseScene {
 
 
 
-        this.camera.position.set(this.baseCameraPosition.x,this.baseCameraPosition.y,this.baseCameraPosition.z)
+        this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();
         this.buildBackGround(galaxy,80,64,64)
     }
