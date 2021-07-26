@@ -82,6 +82,8 @@ function onFrame() {
     scene.controls.update();
     scene.update();
     scene.render();
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 

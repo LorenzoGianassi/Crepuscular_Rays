@@ -10,7 +10,7 @@ export class PlaneScene extends BaseScene {
 
     constructor() {
         super(6, window.innerWidth / window.innerHeight, 20.1, 10000);
-        this.baseCameraPosition = new THREE.Vector3(0,0,180);
+        this.baseCameraPosition = new THREE.Vector3(0,0,350);
         this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.planeGroupScene = new THREE.Group();
         this.groupBasePosition = new THREE.Vector3(0,0,0);
@@ -48,7 +48,7 @@ export class PlaneScene extends BaseScene {
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
-        // renderer.setClearColor("#030509");
+ 
 
         this.sceneComposer.render();
     }
@@ -75,9 +75,13 @@ export class PlaneScene extends BaseScene {
     rollerCoasterLoop(){
         const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(-15, -10, 0), 
-            new THREE.Vector3(0, 10, -6),
+            new THREE.Vector3(-8, -5, -6),
+            new THREE.Vector3(0, -10, -6), 
+            new THREE.Vector3(8, -5, -6),
             new THREE.Vector3(15, -10, 0),
-            new THREE.Vector3(0, 10, 6),
+            new THREE.Vector3(8, -5, 6),
+            new THREE.Vector3(0, -10, 6), 
+            new THREE.Vector3(-8, -5, 6),
         ],true);
 
         return curve
