@@ -9,11 +9,11 @@ import { BaseScene } from "./BaseScene";
 export class PlaneScene extends BaseScene {
 
     constructor() {
-        super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
+        super(6, window.innerWidth / window.innerHeight, 20.1, 10000);
         this.baseCameraPosition = new THREE.Vector3(0,0,180);
-        this.baseSunPosition = new THREE.Vector3(0,5,-5);
+        this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.planeGroupScene = new THREE.Group();
-        this.groupBasePosition = new THREE.Vector3(-15,0,0);
+        this.groupBasePosition = new THREE.Vector3(0,0,0);
 
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
@@ -29,10 +29,10 @@ export class PlaneScene extends BaseScene {
         this.up = new THREE.Vector3(0, 0, -1);
         this.axis = new THREE.Vector3();
         this.pos = 0;
-        this.pointsPath = this.createPath()
+        this.curve = this.cirleLoop()
 
         this.buildScene();
-        this.buildLight(1.5, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
+        this.buildLight(0.9, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
         this.mixer = new THREE.AnimationMixer();
         this.buildGUI();
 
@@ -61,16 +61,31 @@ export class PlaneScene extends BaseScene {
         this.flyPlane()
     }
 
-    createPath() {
-        const pointsPath = new THREE.CurvePath();
+    cirleLoop(){
         const curve = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(-15, 0, 3), 
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(15, 0, 3),
-            new THREE.Vector3(0, 0, 6),
+            new THREE.Vector3(-15, -10, 0), 
+            new THREE.Vector3(0, -10, -6),
+            new THREE.Vector3(15, -10, 0),
+            new THREE.Vector3(0, -10, 6),
         ],true);
 
-        var points = curve.getPoints(50);
+        return curve
+    }
+
+    rollerCoasterLoop(){
+        const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-15, -10, 0), 
+            new THREE.Vector3(0, 10, -6),
+            new THREE.Vector3(15, -10, 0),
+            new THREE.Vector3(0, 10, 6),
+        ],true);
+
+        return curve
+    }
+
+    createPath() {
+        const pointsPath = new THREE.CurvePath();
+        var points = this.curve.getPoints(50);
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
 
         var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
@@ -79,7 +94,7 @@ export class PlaneScene extends BaseScene {
         var curveObject = new THREE.Line(geometry, material);
         this.scene.add(curveObject)
 
-        pointsPath.add(curve);
+        pointsPath.add(this.curve);
         return pointsPath;
     }
 
@@ -141,9 +156,15 @@ export class PlaneScene extends BaseScene {
 
             }
         })
-        this.scene.add(this.planeGroupScene);
-        this.planeGroupScene.position.copy(this.groupBasePosition);     
 
+        this.camera.position.copy(this.baseCameraPosition);     
+        this.planeGroupScene.position.copy(this.groupBasePosition);     
+        this.scene.add(this.planeGroupScene);
+
+        this.controls.target.set(0, -5, 0)
+
+        this.controls.minDistance = 100;
+        this.controls.maxDistance = 300
 
         this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();
@@ -193,6 +214,19 @@ export class PlaneScene extends BaseScene {
         // folder of the gUI to enable animation
         this.gui.addFolder("Flying Management");
         this.gui.add(this.options, "animate").name("Enable Fly");
+        this.gui.addFolder("Select Route");
+        let CircleLoop = this.cirleLoop()
+        let RollerCoasterLoop = this.rollerCoasterLoop()
+        let routes = {
+            "CircleLoop": CircleLoop,
+            "RollerCoasterLoop": RollerCoasterLoop,
+        }
+        let selector = this.gui.add({ CircleLoop }, "CircleLoop", Object.keys(routes)).name("Routes");
+        selector.onChange((selectedRoutes) => {
+            this.curve = routes[selectedRoutes];   
+            this.pointsPath = this.createPath()
+        })
+        selector.setValue("CircleLoop"); 
         this.gui.addFolder("Speed of the animations",);
         this.gui.add(this.options, "animation_speed", 0, 2, 0.01).name("Speed");
         this.gui.addFolder("Speed of Flying",);
