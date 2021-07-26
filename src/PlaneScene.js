@@ -38,7 +38,7 @@ export class PlaneScene extends BaseScene {
         this.pointsPath = this.createPath()
 
         this.buildScene();
-        this.buildLight(1.5,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
+        this.buildLight(1.5, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
         this.mixer = new THREE.AnimationMixer();
         this.buildGUI();
 

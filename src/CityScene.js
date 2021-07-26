@@ -10,23 +10,23 @@ export class CityScene extends BaseScene {
     constructor() {
         super(50, window.innerWidth / window.innerHeight, 15.1, 100000);
         this.cityScene = new THREE.Group();
-        this.baseCameraPosition = new THREE.Vector3(-230,-5,800);
+        this.baseCameraPosition = new THREE.Vector3(-2440,-840,-150);
+        this.baseCityPosition = new THREE.Vector3(-850,-1060,-250);
+        this.baseSunPosition = new THREE.Vector3(0,0,0);
         this.effectComposer = this.composeEffects()
         this.occlusionComposer = this.effectComposer[0]
         this.sceneComposer = this.effectComposer[1]
-
-        
-
         this.options = {
             color: "#ffffff",
             animate: false,
         }
         this.angle = 0;
         this.buildScene();
-        this.buildLight();
+        this.buildLight(50, 80, 80, this.baseSunPosition.x, this.baseSunPosition.y, this.baseSunPosition.z, 0xd9be6d);
         this.buildGUI();
 
     }
+
 
 
 
@@ -47,8 +47,9 @@ export class CityScene extends BaseScene {
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms);
         // this.rotateSphere();      
-        this.loopSun();  
-        //console.log(this.camera.position)
+        this.loopSun(); 
+
+        console.log(this.camera.position)
     }
 
 
@@ -70,8 +71,6 @@ export class CityScene extends BaseScene {
 
     buildBackGround() {
         const textureloader = new THREE.TextureLoader();
-
-
         const starGeometry = new THREE.SphereBufferGeometry(10000, 600, 600);
         const texture = textureloader.load(sky);
         const starMaterial = new THREE.MeshBasicMaterial({
@@ -116,11 +115,10 @@ export class CityScene extends BaseScene {
 
             }
         })
+        this.camera.position.copy(this.baseCameraPosition);     
+        this.cityScene.position.copy(this.baseCityPosition);     
         this.scene.add(this.cityScene);
-        this.controls.target.set(this.cityScene.position.x = -850, this.cityScene.position.y = -700, this.cityScene.position.z = -200)
-        this.cityScene.position.x = -850;
-        this.cityScene.position.y = -980;
-        this.cityScene.position.z = -250;
+        this.controls.target.set(-750, -700, 0)
         this.cityScene.rotation.y = 11.5;
 
         this.controls.minAzimuthAngle = -Math.PI ;
@@ -137,26 +135,6 @@ export class CityScene extends BaseScene {
 
 
         return Promise.resolve(this)
-    }
-
-    buildLight() {
-        //AmbientLight
-        this.ambientLight = new THREE.AmbientLight("#2c3e50");
-        this.scene.add(this.ambientLight);
-
-
-        //PointLight
-        this.pointLight = new THREE.PointLight("#fffffff");
-        this.scene.add(this.pointLight);
-
-
-
-        let geometry = new THREE.SphereBufferGeometry(50, 80, 80);
-        let material = new THREE.MeshBasicMaterial({ color: 0xd9be6d });
-        this.lightSphere = new THREE.Mesh(geometry, material);
-        this.lightSphere.layers.set(OCCLUSION_LAYER)
-        this.scene.add(this.lightSphere);
-
     }
 
 
@@ -210,6 +188,7 @@ export class CityScene extends BaseScene {
 
 
     }
+
 
 
 }

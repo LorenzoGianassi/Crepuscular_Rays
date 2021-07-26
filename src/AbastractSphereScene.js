@@ -17,7 +17,7 @@ export class AbstractSphereScene extends BaseScene {
         }
         this.angle = 0;
         this.buildScene();
-        this.buildLight(1.2,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
+        this.buildLight(1.2, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
         this.buildGUI();
 
     }

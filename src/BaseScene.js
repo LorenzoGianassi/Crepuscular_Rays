@@ -48,27 +48,26 @@ export class BaseScene {
     throw new Error("Method must be implemented.");
   }
 
-  // reset camera position
+  // Reset camera position
   resetPosition(){ 
     this.camera.position.copy(this.baseCameraPosition);       
     this.controls.update();
   }
 
   // Light management
-  buildLight(radius,x,y,z) {
-    //AmbientLight
+  buildLight(radius,width,height,x,y,z, sunColor) {
+    // AmbientLight
     this.ambientLight = new THREE.AmbientLight("#2c3e50");
     this.scene.add(this.ambientLight);
 
 
-    //PointLight
+    // PointLight
     this.pointLight = new THREE.PointLight("#fffffff");
     this.scene.add(this.pointLight);
 
-
-
-    let geometry = new THREE.SphereBufferGeometry(radius, 32, 32);
-    let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    // Geometry and Material
+    let geometry = new THREE.SphereBufferGeometry(radius, width, height);
+    let material = new THREE.MeshBasicMaterial({ color: sunColor });
     this.lightSphere = new THREE.Mesh(geometry, material);
     this.lightSphere.layers.set(OCCLUSION_LAYER);
     this.lightSphere.position.set(x,y,z);
@@ -76,7 +75,8 @@ export class BaseScene {
 
     this.scene.add(this.lightSphere);
 }
-// reset sun position
+
+// Reset sun position
 resetSunPosition(){ 
   this.lightSphere.position.copy(this.baseSunPosition);       
   this.controls.update();
@@ -84,7 +84,7 @@ resetSunPosition(){
   updateShaderLightPosition(this.lightSphere,this.camera,this.shaderUniforms)
 }
 
-// method t0 build the background of the scenes
+// Method to build the background of the scenes
 
 buildBackGround(path,radius,width,height) {
   const textureloader = new THREE.TextureLoader();

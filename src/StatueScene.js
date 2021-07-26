@@ -20,7 +20,7 @@ export class StatueScene extends BaseScene {
         }
         this.angle = 0;
         this.buildScene();
-        this.buildLight(0.8,this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z);
+        this.buildLight(0.8, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
         this.buildGUI();
  
     }
