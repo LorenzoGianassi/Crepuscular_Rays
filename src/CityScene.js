@@ -32,9 +32,6 @@ export class CityScene extends BaseScene {
 
     }
 
-
-
-
     render() {
         this.controls.update();
         this.camera.layers.set(OCCLUSION_LAYER);
@@ -49,10 +46,7 @@ export class CityScene extends BaseScene {
 
     update() {
         updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms);
-        // this.rotateSphere();      
-        this.loopSun(); 
-
-        this.flyPlane()
+        this.riseSun();
 
     }
 
@@ -79,7 +73,7 @@ export class CityScene extends BaseScene {
         return pointsPath;
     }
 
-    flyPlane() {
+    riseSun() {
         if (this.options.animate == true) {
 
             const newPosition = this.pointsPath.getPoint(this.pos);
@@ -102,18 +96,8 @@ export class CityScene extends BaseScene {
 
     }
 
-    loopSun() {
-        if (this.options.animate == true) {
-            var radius = 10,
-                xPos = Math.sin(this.angle) * radius,
-                yPos = Math.cos(this.angle) * radius;
-            this.lightSphere.position.set(xPos, yPos, 0);
-            this.pointLight.position.set(xPos, yPos, 0);
 
-            this.angle += 0.008
-            updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
-        }
-    }
+
 
     asyncLoad(filepath, onProgress = () => {
     }) {
@@ -159,7 +143,7 @@ export class CityScene extends BaseScene {
 
 
         this.controls.update();
-       // this.buildBackGround();
+        this.buildBackGround(sky, 20000, 128, 128);
 
 
         return Promise.resolve(this)
@@ -201,11 +185,14 @@ export class CityScene extends BaseScene {
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
         // folder of the GUI to enable animation
-        this.gui.addFolder("Sun MOvement");
+        this.gui.addFolder("Sun Movement");
         this.gui.add(this.options, "animate").name("Move Sun");
+        this.gui.add(this.options, "sun_speed", 0, 10, 0.01).name("Speed");
 
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.add(this, "resetSunPosition").name("Reset Sun") 
+
 
 
     }

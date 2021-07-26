@@ -147,9 +147,8 @@ export class PlaneScene extends BaseScene {
 
         this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();
-        this.buildBackGround(sky,80,64,64)
-
-
+        this.buildBackGround(sky, 80, 64, 64);
+        
         return Promise.resolve(this)
     }
 
@@ -200,7 +199,7 @@ export class PlaneScene extends BaseScene {
 
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset position")
-        this.gui.add(this, "resetSunPosition").name("Reset Sun")
+        this.gui.add(this, "resetSunPosition").name("Reset Sun") 
 
     }
 

@@ -128,7 +128,7 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
         // folder of the gUI to enable animation
-        this.gui.addFolder("Sun movement");
+        this.gui.addFolder("Sun Movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset Camera");
