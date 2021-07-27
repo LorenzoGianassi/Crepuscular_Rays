@@ -14,7 +14,7 @@ import { CityScene } from './CityScene';
 export {
     renderer,
     occlusionShader,
-    blendingShader,
+    blendingShader, 
     loader,
     OCCLUSION_LAYER,
     DEFAULT_LAYER,
