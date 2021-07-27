@@ -19,6 +19,7 @@ export class StatueScene extends BaseScene {
         this.sceneComposer = this.effectComposer[1] 
         this.options = { 
             animate: false,
+            speed:1,
         }
         this.angle = 0;
         this.buildScene();
@@ -53,7 +54,7 @@ export class StatueScene extends BaseScene {
                 yPos = Math.cos(this.angle) * radius;
             this.lightSphere.position.set(xPos, yPos, 0);
             this.pointLight.position.set(xPos, yPos, 0);
-            this.angle += 0.008
+            this.angle += 0.008*this.options.speed
             updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         }
     }
@@ -123,9 +124,10 @@ export class StatueScene extends BaseScene {
         // folder of the gUI to enable animation
         this.gui.addFolder("Sun Movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
+        this.gui.add(this.options, "speed", 0, 10, 0.01).name("Speed");
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset Camera");
-        this.gui.add(this, "resetSunPosition").name("Reset Sun")
+        this.gui.add(this, "resetSunPosition").name("Reset Sun"); 
     }
 }
 
