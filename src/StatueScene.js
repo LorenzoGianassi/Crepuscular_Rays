@@ -1,4 +1,4 @@
-import testfile from "../models/statueGLTF/scene.gltf";
+import statueFile from "../models/statueGLTF/scene.gltf";
 
 import galaxy from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
@@ -27,10 +27,8 @@ export class StatueScene extends BaseScene {
  
     }
 
-
     render() {
         this.controls.update();
-
 
         this.camera.layers.set(OCCLUSION_LAYER);
         renderer.setClearColor("#1a1a1a")
@@ -62,7 +60,7 @@ export class StatueScene extends BaseScene {
 
 
     buildScene() {
-        loader.load(testfile, gltf => {
+        loader.load(statueFile, gltf => {
             gltf.scene.traverse(function (obj) {
                 if (obj.isMesh) {
                     let material = new THREE.MeshBasicMaterial({ color: "#000000" });
@@ -78,14 +76,9 @@ export class StatueScene extends BaseScene {
             this.scene.add(gltf.scene);
             gltf.scene.position.copy(this.groupBasePosition);     
 
-
-
-
         }, function (error) {
              console.error( error );
         });
-
-
 
         this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();

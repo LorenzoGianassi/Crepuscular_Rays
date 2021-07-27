@@ -1,6 +1,4 @@
-
 import planeFile from "../models/planeGLTF/scene.gltf";
-
 import sky from "../models/backgrounds/cloud.jpg";
 import * as THREE from 'three';
 import {Clock} from "three";

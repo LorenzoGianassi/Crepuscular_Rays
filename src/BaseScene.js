@@ -38,8 +38,6 @@ export class BaseScene {
     throw new Error("Method must be implemented.");
   }
 
-
-
   buildScene() {
     throw new Error("Method must be implemented.");
   }
@@ -55,7 +53,7 @@ export class BaseScene {
   }
 
   // Light management
-  buildLight(radius,width,height,x,y,z, sunColor) {
+  buildLight(radius, width, height, x, y, z, sunColor) {
     // AmbientLight
     this.ambientLight = new THREE.AmbientLight("#2c3e50");
     this.scene.add(this.ambientLight);

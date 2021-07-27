@@ -11,6 +11,16 @@ import { StatueScene } from "./StatueScene";
 import { PlaneScene } from './PlaneScene';
 import { AbstractSphereScene } from './AbastractSphereScene';
 import { CityScene } from './CityScene';
+export {
+    renderer,
+    occlusionShader,
+    blendingShader,
+    loader,
+    OCCLUSION_LAYER,
+    DEFAULT_LAYER,
+    LOADING_LAYER,
+    updateShaderLightPosition
+};
 
 
 
@@ -43,7 +53,7 @@ const blendingShader = {
 // Layers
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
-const LOADING_LAYER = 2;
+// const LOADING_LAYER = 2;
 
 //Loader
 const loader = new GLTFLoader();
@@ -62,19 +72,15 @@ document.body.appendChild(renderer.domElement);
 
 
 
+function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
+    let screenPosition = lightSphere.position.clone().project(camera);
+    let newX = 0.5 * (screenPosition.x + 1);
+    let newY = 0.5 * (screenPosition.y + 1);
+    let newZ = 0.5 * (screenPosition.z + 1);
+    shaderUniforms.lightPosition.value.set(newX, newY, newZ)
+}
+
 let scene = new StatueScene()
-
-export {
-    renderer,
-    occlusionShader,
-    blendingShader,
-    loader,
-    OCCLUSION_LAYER,
-    DEFAULT_LAYER,
-    LOADING_LAYER,
-    updateShaderLightPosition
-};
-
 
 
 function onFrame() {
@@ -86,14 +92,6 @@ function onFrame() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-
-function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
-    let screenPosition = lightSphere.position.clone().project(camera);
-    let newX = 0.5 * (screenPosition.x + 1);
-    let newY = 0.5 * (screenPosition.y + 1);
-    let newZ = 0.5 * (screenPosition.z + 1);
-    shaderUniforms.lightPosition.value.set(newX, newY, newZ)
-}
 
 
 

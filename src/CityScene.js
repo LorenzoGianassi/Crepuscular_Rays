@@ -56,8 +56,8 @@ export class CityScene extends BaseScene {
             new THREE.Vector3(-600, -1000, -1400), 
             new THREE.Vector3(0, 100, -1000),
             new THREE.Vector3(20, 250, -800),
-            new THREE.Vector3(20, 250, -600),
-            new THREE.Vector3(100, -1000, 500), 
+            new THREE.Vector3(20, 250, -600), 
+            new THREE.Vector3(100, -1000, 500),   
         ]);
 
         var points = curve.getPoints(50);
@@ -75,7 +75,6 @@ export class CityScene extends BaseScene {
 
     riseSun() {
         if (this.options.animate == true) {
-
             const newPosition = this.pointsPath.getPoint(this.pos);
             const tangent = this.pointsPath.getTangent(this.pos);
             this.lightSphere.position.copy(newPosition);
@@ -123,7 +122,6 @@ export class CityScene extends BaseScene {
                 if (obj.parent != null) { 
                     obj.parent.add(occlusionObject)
                 }
-
 
             }
         })
@@ -175,7 +173,6 @@ export class CityScene extends BaseScene {
         })
 
 
-
         this.gui.addFolder("Volumetric scattering parameters");
 
         this.gui.add(this.shaderUniforms.weight, "value", 0, 1, 0.01).name('Weight');
@@ -192,7 +189,6 @@ export class CityScene extends BaseScene {
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset position")
         this.gui.add(this, "resetSunPosition").name("Reset Sun") 
-
 
 
     }
