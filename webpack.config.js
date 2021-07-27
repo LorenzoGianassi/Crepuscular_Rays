@@ -69,7 +69,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: "./web/index.html",
+        template: "./index.html",
         inject: false
       }),
       new MiniCssExtractPlugin(),

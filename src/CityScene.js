@@ -20,6 +20,7 @@ export class CityScene extends BaseScene {
             sun_speed: 1,
         }
 
+        
         this.angle = 0;
         // variables for the fly of the plane
         this.up = new THREE.Vector3(0, 0, -1);
