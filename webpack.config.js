@@ -72,10 +72,6 @@ module.exports = (env, argv) => {
         template: "./web/index.html",
         inject: false
       }),
-      new FaviconsWebpackPlugin({
-        logo: './web/logo.png',
-        mode: "light"
-      }),
       new MiniCssExtractPlugin(),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',

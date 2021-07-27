@@ -139,8 +139,8 @@ export class AbstractSphereScene extends BaseScene {
         // folder of the GUI to enable animation
         this.gui.addFolder("Rotation Management");
         this.gui.add(this.options, "animate").name("Enable Rotation");
-        this.gui.addFolder("Scene management")
-        this.gui.add(this, "resetPosition").name("Reset position");
+        this.gui.addFolder("Scene Management")
+        this.gui.add(this, "resetPosition").name("Reset Camera");
         this.gui.add(this, "resetSunPosition").name("Reset Sun")
 
     }

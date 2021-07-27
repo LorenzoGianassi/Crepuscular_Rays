@@ -183,11 +183,11 @@ export class CityScene extends BaseScene {
 
         // folder of the GUI to enable animation
         this.gui.addFolder("Sun Movement");
-        this.gui.add(this.options, "animate").name("Move Sun");
+        this.gui.add(this.options, "animate").name("Sun Movement");
         this.gui.add(this.options, "sun_speed", 0, 10, 0.01).name("Speed");
 
-        this.gui.addFolder("Scene management")
-        this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.addFolder("Scene Management")
+        this.gui.add(this, "resetPosition").name("Reset Camera")
         this.gui.add(this, "resetSunPosition").name("Reset Sun") 
 
 

@@ -21,8 +21,10 @@ export class PlaneScene extends BaseScene {
             animation_speed: 1,
             flying_speed: 1,
         }
+
         this.clock = new Clock()
         this.angle = 0;
+        
         // variables for the fly of the plane
         this.up = new THREE.Vector3(0, 0, -1);
         this.axis = new THREE.Vector3();
@@ -228,13 +230,13 @@ export class PlaneScene extends BaseScene {
             this.pointsPath = this.createPath()
         })
         selector.setValue("CircleLoop"); 
-        this.gui.addFolder("Speed of the animations",);
+        this.gui.addFolder("Animation Speed",);
         this.gui.add(this.options, "animation_speed", 0, 2, 0.01).name("Speed");
-        this.gui.addFolder("Speed of Flying",);
+        this.gui.addFolder("Flying Speed",);
         this.gui.add(this.options, "flying_speed", 0, 10, 0.01).name("Speed");
 
-        this.gui.addFolder("Scene management")
-        this.gui.add(this, "resetPosition").name("Reset position")
+        this.gui.addFolder("Scene Management")
+        this.gui.add(this, "resetPosition").name("Reset Camera")
         this.gui.add(this, "resetSunPosition").name("Reset Sun") 
 
     }

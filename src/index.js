@@ -18,10 +18,8 @@ export {
     loader,
     OCCLUSION_LAYER,
     DEFAULT_LAYER,
-    LOADING_LAYER,
     updateShaderLightPosition
 };
-
 
 
 // Shaders
@@ -53,7 +51,6 @@ const blendingShader = {
 // Layers
 const DEFAULT_LAYER = 0;
 const OCCLUSION_LAYER = 1;
-// const LOADING_LAYER = 2;
 
 //Loader
 const loader = new GLTFLoader();
