@@ -14,7 +14,7 @@ import { CityScene } from './CityScene';
 export {
     renderer,
     occlusionShader,
-    blendingShader, 
+    blendingShader,  
     loader,
     OCCLUSION_LAYER,
     DEFAULT_LAYER,
@@ -111,8 +111,8 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("PlaneScene"); 
+    selector.setValue("SphereScene");  
 }
 
 SelectScene();
-onFrame();
+onFrame(); 

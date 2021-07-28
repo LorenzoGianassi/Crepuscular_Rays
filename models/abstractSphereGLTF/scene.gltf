@@ -881,7 +881,7 @@
   "materials": [
     {
       "doubleSided": true,
-      "name": "Material.001",
+      "name": "Material.001_0",
       "pbrMetallicRoughness": {
         "baseColorFactor": [
           0.8,
@@ -892,7 +892,7 @@
         "roughnessFactor": 0.29355836054210827
       }
     }
-  ],
+  ], 
   "meshes": [
     {
       "name": "Cube_Material.001_0",
@@ -1167,7 +1167,7 @@
         0.0,
         1.0
       ],
-      "name": "4f6ac1f2f5994758ada17e84aa8ee60e.fbx"
+      "name": "4f6ac1f2f5994758ada17e84aa8ee60e.gltf"
     },
     {
       "children": [

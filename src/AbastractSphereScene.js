@@ -49,9 +49,9 @@ export class AbstractSphereScene extends BaseScene {
             xpos = Math.sin(this.angle) * radius,
             zpos = Math.cos(this.angle) * radius;
 
-            this.AbstractSphereScene.position.set(xpos, 0, zpos)
-            this.AbstractSphereScene.rotation.x += 0.01;
-            this.AbstractSphereScene.rotation.z += 0.05;
+            this.sphereGroupScene.position.set(xpos, 0, zpos)
+            this.sphereGroupScene.rotation.x += 0.01;
+            this.sphereGroupScene.rotation.z += 0.05;
 
 
             this.angle += 0.009;
@@ -78,8 +78,8 @@ export class AbstractSphereScene extends BaseScene {
 
 
     async buildScene() {
-        this.AbstractSphereScene = (await this.asyncLoad(sphereFile)).scene
-        this.AbstractSphereScene.traverse(function (obj) {
+        this.sphereGroupScene = (await this.asyncLoad(sphereFile)).scene
+        this.sphereGroupScene.traverse(function (obj) {
             if (obj.isMesh) {
                 let material = new THREE.MeshBasicMaterial({ color: "#000000" });
                 let occlusionObject = new THREE.Mesh(obj.geometry, material);
@@ -91,7 +91,7 @@ export class AbstractSphereScene extends BaseScene {
 
             }
         })
-        this.scene.add(this.AbstractSphereScene);
+        this.scene.add(this.sphereGroupScene);
 
         this.camera.position.copy(this.baseCameraPosition); 
         this.sphereGroupScene.position.copy(this.groupBasePosition);     
