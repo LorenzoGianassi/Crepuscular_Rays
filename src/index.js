@@ -111,7 +111,7 @@ function SelectScene() {
         oldScene.destroyGUI();
         scene = new scenes[selectedScene]();
     })
-    selector.setValue("SphereScene");  
+    selector.setValue("StatueScene");  
 }
 
 SelectScene();
