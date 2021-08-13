@@ -3,29 +3,30 @@ import statueFile from "../models/statueGLTF/scene.gltf";
 import galaxy from "../models/backgrounds/galaxy.png";
 import * as THREE from 'three';
 
-import { DEFAULT_LAYER, loader, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
+
+import { DEFAULT_LAYER, loader, manager, OCCLUSION_LAYER, renderer, updateShaderLightPosition } from "./index";
 import { BaseScene } from "./BaseScene";
 
 export class StatueScene extends BaseScene {
 
     constructor() {
         super(5, window.innerWidth / window.innerHeight, 0.1, 10000);
-        this.baseCameraPosition = new THREE.Vector3(0,0,200);
-        this.baseSunPosition = new THREE.Vector3(0,0,0);
+        this.baseCameraPosition = new THREE.Vector3(0, 0, 200);
+        this.baseSunPosition = new THREE.Vector3(0, 0, 0);
         this.effectComposer = this.composeEffects()
-        this.groupBasePosition = new THREE.Vector3(0,0,8);
+        this.groupBasePosition = new THREE.Vector3(0, 0, 8);
 
         this.occlusionComposer = this.effectComposer[0]
-        this.sceneComposer = this.effectComposer[1] 
-        this.options = { 
+        this.sceneComposer = this.effectComposer[1]
+        this.options = {
             animate: false,
-            speed:1,
+            speed: 1,
         }
         this.angle = 0;
         this.buildScene();
-        this.buildLight(0.8, 32, 32, this.baseSunPosition.x,this.baseSunPosition.y,this.baseSunPosition.z, 0xffffff);
+        this.buildLight(0.8, 32, 32, this.baseSunPosition.x, this.baseSunPosition.y, this.baseSunPosition.z, 0xffffff);
         this.buildGUI();
- 
+
     }
 
     render() {
@@ -36,7 +37,7 @@ export class StatueScene extends BaseScene {
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
-        renderer.setClearColor("#030509");
+        renderer.setClearColor("#000000");
 
         this.sceneComposer.render();
     }
@@ -48,13 +49,13 @@ export class StatueScene extends BaseScene {
     }
 
     loopSun() {
-        if (this.options.animate==true){
+        if (this.options.animate == true) {
             var radius = 10,
                 xPos = Math.sin(this.angle) * radius,
                 yPos = Math.cos(this.angle) * radius;
             this.lightSphere.position.set(xPos, yPos, 0);
             this.pointLight.position.set(xPos, yPos, 0);
-            this.angle += 0.008*this.options.speed
+            this.angle += 0.008 * this.options.speed
             updateShaderLightPosition(this.lightSphere, this.camera, this.shaderUniforms)
         }
     }
@@ -74,19 +75,22 @@ export class StatueScene extends BaseScene {
                 }
             })
 
+
+
+
             this.scene.add(gltf.scene);
-            gltf.scene.position.copy(this.groupBasePosition);     
+            gltf.scene.position.copy(this.groupBasePosition);
 
         }, function (error) {
-             console.error( error );
+            console.error(error);
         });
 
-        this.camera.position.copy(this.baseCameraPosition);     
+        this.camera.position.copy(this.baseCameraPosition);
         this.controls.update();
-        this.buildBackGround(galaxy,80,64,64)
+        this.buildBackGround(galaxy, 80, 64, 64)
     }
 
-    
+
     buildGUI() {
         this.gui.addFolder("Light Position");
         let xController = this.gui.add(this.lightSphere.position, "x", -10, 10, 0.01);
@@ -127,7 +131,7 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.options, "speed", 0, 10, 0.01).name("Speed");
         this.gui.addFolder("Scene management")
         this.gui.add(this, "resetPosition").name("Reset Camera");
-        this.gui.add(this, "resetSunPosition").name("Reset Sun"); 
+        this.gui.add(this, "resetSunPosition").name("Reset Sun");
     }
 }
 

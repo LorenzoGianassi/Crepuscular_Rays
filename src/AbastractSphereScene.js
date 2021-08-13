@@ -27,10 +27,11 @@ export class AbstractSphereScene extends BaseScene {
     render() {
         this.controls.update();
         this.camera.layers.set(OCCLUSION_LAYER);
-
+        renderer.setClearColor("#030509");
+        
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
-        renderer.setClearColor("#030509");
+        renderer.setClearColor("#000000");
 
         this.sceneComposer.render();
     }

@@ -48,7 +48,8 @@ export class PlaneScene extends BaseScene {
 
         this.occlusionComposer.render();
         this.camera.layers.set(DEFAULT_LAYER);
- 
+        renderer.setClearColor("#000000");
+
 
         this.sceneComposer.render();
     }
