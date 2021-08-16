@@ -6,6 +6,7 @@
 - [Usage](#3)
   - [Installation](#4)
   - [Run the Code](#5)
+  - [Live Demo](#6)
 
 # About the Project <a name="1"/>
 Implementation of the effects of Crepuscolar Rays based on the technique developed by Kenny Mitchell. <br/> <br/>
@@ -24,7 +25,7 @@ This project is based on the two following papers wich descride the technique ap
 To run this project locally you need to follow these steps:
 1. Clone this repository with the command
 ```sh
-git clone https://github.com/LorenzoGianassi/Crepuscolar_Rays.git
+git clone https://github.com/LorenzoGianassi/Crepuscular_Rays.git
 ```
 2. Run ```npm install```  in the root folder of the repository
 
@@ -32,7 +33,8 @@ git clone https://github.com/LorenzoGianassi/Crepuscolar_Rays.git
 After the Installation is made run ```npm start``` to start the Webserver and see the results on [http://localhost:8080](http://localhost:8080).
 <br/>
 You can switch the different Scenes and try to menage values with the provided GUI.
-
+## Live Demo <a name="6"/>
+A Live Demo, made with Github Pages, is available at this [Link](https://lorenzogianassi.github.io/Crepuscular_Rays/).
 # Authors
 - [**Lorenzo Gianassi**](https://github.com/LorenzoGianassi)
 - [**Francesco Gigli**](https://github.com/FrancescoGigli)
