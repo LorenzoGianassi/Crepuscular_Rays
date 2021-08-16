@@ -5,8 +5,7 @@ import { Clock } from 'three';
 import scatteringFragmentShader from "./FragmentScatteringShader.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
-import logoFile from "../web/sun.png";
-import loadingFile from "../web/load.png";
+import logoFile from "../web/loading.png";
 import dat from 'dat.gui';
 import * as THREE from 'three';
 import { StatueScene } from "./StatueScene";
@@ -88,7 +87,6 @@ function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
 
 
 var iconTexture = new THREE.TextureLoader().load( logoFile );
-var loadingTexture = new THREE.TextureLoader().load( loadingFile );
 
 var RESOURCE_LOADED = false;
 var loadingScreen = {
@@ -98,16 +96,12 @@ var loadingScreen = {
         new THREE.BoxGeometry( 1.5, 1.5, 1.5 ),
         new THREE.MeshBasicMaterial( { map: iconTexture } )
     ),
-    text: new THREE.Mesh(
-        new THREE.BoxGeometry( 3, 0.5, 1 ),
-        new THREE.MeshBasicMaterial( { map: loadingTexture }).opacity
-    )
+
 }
 
 let scene = new StatueScene()
 
 manager.onLoad = function () {
-    console.log("Loading complete!")
     RESOURCE_LOADED = true
 }
 
@@ -115,22 +109,16 @@ manager.onLoad = function () {
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
     RESOURCE_LOADED = false
-    console.log(`Items loaded: ${itemsLoaded}/${itemsTotal}`)
 }
 
-
-
 manager.onError = function (url) {
-    console.log('There was an error loading ' + url)
 }
 
 
 function onFrame() {
-    loadingScreen.text.position.set(0,0,5)
     loadingScreen.box.position.set(0,0,5)
 
     loadingScreen.camera.lookAt(loadingScreen.box.position);
-    loadingScreen.scene.add(loadingScreen.text);
     loadingScreen.scene.add(loadingScreen.box);
 
     if (RESOURCE_LOADED == false){

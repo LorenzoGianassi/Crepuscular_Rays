@@ -90,15 +90,6 @@ export class PlaneScene extends BaseScene {
 
     createPath() {
         const pointsPath = new THREE.CurvePath();
-        var points = this.curve.getPoints(50);
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-        // Create the final object to add to the scene
-        var curveObject = new THREE.Line(geometry, material);
-        this.scene.add(curveObject)
-
         pointsPath.add(this.curve);
         return pointsPath;
     }
@@ -168,12 +159,19 @@ export class PlaneScene extends BaseScene {
 
         this.controls.target.set(0, -5, 0)
 
+       
+        this.controls.minAzimuthAngle = -Math.PI ;
+
+        this.controls.maxAzimuthAngle = -Math.PI + Math.PI ;
+        this.controls.minPolarAngle = Math.PI / 9 + Math.PI / 4;
+        this.controls.maxPolarAngle = Math.PI / 2 + Math.PI / 5;
+
         this.controls.minDistance = 100;
-        this.controls.maxDistance = 300
+        this.controls.maxDistance = 500
 
         this.camera.position.copy(this.baseCameraPosition);     
         this.controls.update();
-        this.buildBackGround(sky, 80, 64, 64);
+        this.buildBackGround(sky, 200, 128, 128);
         
         return Promise.resolve(this)
     }

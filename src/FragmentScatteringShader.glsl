@@ -9,8 +9,8 @@ uniform float density;
 varying vec2 vUv;
 
 void main() {
-    vec2 ray = vUv - lightPosition;
-    vec2 delta = ray * (1. / float(samples)) * density;
+    vec2 delta = vUv - lightPosition;
+    delta *= (1. / float(samples)) * density;
     vec4 color = texture(tDiffuse, vUv);
     vec2 currentPos = vUv;
     float illuminationDecay = 1.;

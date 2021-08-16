@@ -61,16 +61,6 @@ export class CityScene extends BaseScene {
             new THREE.Vector3(20, 250, -600), 
             new THREE.Vector3(100, -1000, 500),   
         ]);
-
-        var points = curve.getPoints(50);
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-        // Create the final object to add to the scene
-        var curveObject = new THREE.Line(geometry, material);
-        this.scene.add(curveObject)
-
         pointsPath.add(curve);
         return pointsPath;
     }
