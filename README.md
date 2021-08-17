@@ -1,4 +1,4 @@
-# Crepuscolar_Rays
+# Crepuscular_Rays
 ![](images/logo_large.png) <br/>
 ## Table of Contents  
 - [About the Project](#1)  
