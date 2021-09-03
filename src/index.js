@@ -2,7 +2,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Clock } from 'three';
 
-import scatteringFragmentShader from "./FragmentScatteringShader.glsl"
+import scatteringFragmentShader from "./ScatteringFragmentShader.glsl"
 import passThroughVertexShader from "./PassThroughVertexShader.glsl"
 import blendingFragmentShader from "./BlendingFragmentShader.glsl"
 import logoFile from "../web/loading.png";
@@ -78,11 +78,12 @@ const delta = clock.getDelta();
 const loader = new GLTFLoader(manager);
 
 function updateShaderLightPosition(lightSphere, camera, shaderUniforms) {
+    
     let screenPosition = lightSphere.position.clone().project(camera);
     let newX = 0.5 * (screenPosition.x + 1);
     let newY = 0.5 * (screenPosition.y + 1);
-    let newZ = 0.5 * (screenPosition.z + 1);
-    shaderUniforms.lightPosition.value.set(newX, newY, newZ)
+   
+    shaderUniforms.lightPosition.value.set(newX, newY)
 }
 
 

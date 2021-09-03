@@ -54,10 +54,10 @@ export class BaseScene {
 
   // Light management
   buildLight(radius, width, height, x, y, z, sunColor) {
+
     // AmbientLight
     this.ambientLight = new THREE.AmbientLight("#2c3e50");
     this.scene.add(this.ambientLight);
-
 
     // PointLight
     this.pointLight = new THREE.PointLight("#fffffff");
@@ -69,7 +69,6 @@ export class BaseScene {
     this.lightSphere = new THREE.Mesh(geometry, material);
     this.lightSphere.layers.set(OCCLUSION_LAYER);
     this.lightSphere.position.set(x,y,z);
-
 
     this.scene.add(this.lightSphere);
 }
@@ -142,7 +141,6 @@ buildBackGround(path,radius,width,height) {
     let blendingPass = new ShaderPass(blendingShader);
     blendingPass.uniforms.tOcclusion.value = target.texture;
 
-    blendingPass.renderToScreen = true; // Whether the final pass is rendered to the screen (default framebuffer) or not.
     sceneComposer.addPass(blendingPass);
 
 

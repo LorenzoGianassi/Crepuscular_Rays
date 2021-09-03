@@ -75,16 +75,13 @@ export class StatueScene extends BaseScene {
                 }
             })
 
-
-
-
             this.scene.add(gltf.scene);
             gltf.scene.position.copy(this.groupBasePosition);
 
         }, function (error) {
             console.error(error);
         });
-
+        this.controls.maxDistance = 600
         this.camera.position.copy(this.baseCameraPosition);
         this.controls.update();
         this.buildBackGround(galaxy, 80, 64, 64)
@@ -125,7 +122,7 @@ export class StatueScene extends BaseScene {
         this.gui.add(this.shaderUniforms.density, "value", 0, 1, 0.01).name("Density");
         this.gui.add(this.shaderUniforms.samples, "value", 0, 200, 1).name("Samples");
 
-        // folder of the gUI to enable animation
+        // folder of the GUI to enable animation
         this.gui.addFolder("Sun Movement");
         this.gui.add(this.options, "animate").name("Sun Rotation");
         this.gui.add(this.options, "speed", 0, 10, 0.01).name("Speed");

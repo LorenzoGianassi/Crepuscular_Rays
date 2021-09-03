@@ -38,10 +38,11 @@ export class CityScene extends BaseScene {
         this.camera.layers.set(OCCLUSION_LAYER);
         renderer.setClearColor("#1a1a1a")
 
-
         this.occlusionComposer.render();
+
         this.camera.layers.set(DEFAULT_LAYER);
         renderer.setClearColor("#000000");
+        
         this.sceneComposer.render();
     }
 
