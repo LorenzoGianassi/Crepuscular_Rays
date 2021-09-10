@@ -35,6 +35,13 @@ After the Installation is made run ```npm start``` to start the Webserver and se
 You can switch the different Scenes and try to menage values with the provided GUI.
 ## Live Demo <a name="6"/>
 A Live Demo, made with Github Pages, is available at this [Link](https://lorenzogianassi.github.io/Crepuscular_Rays/).
+# Models <a name="2"/>
+The 3D Models used in the project are:
+- [Statue](https://sketchfab.com/3d-models/frank-0eb1f1757349489eab05a0f03cff5b46)
+- [Plane](https://sketchfab.com/3d-models/sopwith-pup-stylized-cupido-c140fa7e825f40dd9dfcfe1a210c0058)
+- [Abstarct Sphere](https://sketchfab.com/3d-models/abstract-geometric-sphere-8d81b384b5cc4f46a1779d0a2f5f7e27)
+- [City](https://sketchfab.com/3d-models/san-francisco-city-108841754fd3485886c1dde13301d341)
+
 # Authors
 - [**Lorenzo Gianassi**](https://github.com/LorenzoGianassi)
 - [**Francesco Gigli**](https://github.com/FrancescoGigli)
